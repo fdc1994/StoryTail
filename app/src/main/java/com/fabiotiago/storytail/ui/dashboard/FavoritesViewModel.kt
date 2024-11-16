@@ -1,13 +1,13 @@
-package com.fabiotiago.storytail.ui.notifications
+package com.fabiotiago.storytail.ui.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class FavoritesViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+        value = "This is the favorites Fragment"
     }
     val text: LiveData<String> = _text
 }

@@ -12,14 +12,20 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.fabiotiago.storytail.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_favorites"
+        android:name="com.fabiotiago.storytail.ui.dashboard.FavoritesFragment"
+        android:label="@string/title_favorites"
+        tools:layout="@layout/fragment_favorites" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.fabiotiago.storytail.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_user_account"
+        android:name="com.fabiotiago.storytail.ui.notifications.UserAccountFragment"
+        android:label="@string/title_account"
+        tools:layout="@layout/fragment_user_account" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.fabiotiago.storytail.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

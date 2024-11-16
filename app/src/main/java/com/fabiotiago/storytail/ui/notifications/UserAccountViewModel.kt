@@ -1,13 +1,13 @@
-package com.fabiotiago.storytail.ui.dashboard
+package com.fabiotiago.storytail.ui.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class UserAccountViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "This is User Account Fragment"
     }
     val text: LiveData<String> = _text
 }
