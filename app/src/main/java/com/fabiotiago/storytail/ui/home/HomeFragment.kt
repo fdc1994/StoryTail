@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.fabiotiago.storytail.databinding.FragmentHomeBinding
@@ -24,15 +25,17 @@ class HomeFragment : Fragment() {
     ): View {
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        val books = listOf(
+            Book("Charlotte's Web", "https://example.com/charlottes_web.jpg", false),
+            Book("The Gruffalo", "https://example.com/the_gruffalo.jpg", true),
+            Book("Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
+            Book("Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
+        )
+        return ComposeView(requireContext()).apply {
+            setContent {
+                HomeScreenComposable.BookCarousel(books)
+            }
         }
-        return root
     }
 
     override fun onDestroyView() {
