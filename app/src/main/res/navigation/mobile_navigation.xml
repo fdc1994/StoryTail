@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_favorites"
-        android:name="com.fabiotiago.storytail.ui.dashboard.FavoritesFragment"
+        android:name="com.fabiotiago.storytail.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
         tools:layout="@layout/fragment_favorites" />
 
     <fragment
         android:id="@+id/navigation_user_account"
-        android:name="com.fabiotiago.storytail.ui.notifications.UserAccountFragment"
+        android:name="com.fabiotiago.storytail.ui.userAccount.UserAccountFragment"
         android:label="@string/title_account"
         tools:layout="@layout/fragment_user_account" />
 

@@ -29,11 +29,13 @@ class HomeFragment : Fragment() {
             Book("Charlotte's Web", "https://example.com/charlottes_web.jpg", false),
             Book("The Gruffalo", "https://example.com/the_gruffalo.jpg", true),
             Book("Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
+            Book("Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
+            Book("Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
             Book("Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
         )
         return ComposeView(requireContext()).apply {
             setContent {
-                HomeScreenComposable.BookCarousel(books)
+                HomeScreenComposable.HomeScreen(books)
             }
         }
     }

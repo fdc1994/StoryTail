@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.dashboard
+package com.fabiotiago.storytail.ui.userAccount
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.fabiotiago.storytail.databinding.FragmentFavoritesBinding
+import com.fabiotiago.storytail.databinding.FragmentUserAccountBinding
 
-class FavoritesFragment : Fragment() {
+class UserAccountFragment : Fragment() {
 
-    private var _binding: FragmentFavoritesBinding? = null
+    private var _binding: FragmentUserAccountBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,17 +22,16 @@ class FavoritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val favoritesViewModel =
-            ViewModelProvider(this).get(FavoritesViewModel::class.java)
+        val userAccountViewModel =
+            ViewModelProvider(this).get(UserAccountViewModel::class.java)
 
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentUserAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        favoritesViewModel.text.observe(viewLifecycleOwner) {
+        val textView: TextView = binding.textNotifications
+        userAccountViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-
         return root
     }
 
