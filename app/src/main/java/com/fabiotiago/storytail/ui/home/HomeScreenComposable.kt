@@ -42,8 +42,13 @@ import com.fabiotiago.storytail.ui.home.HomeScreenComposable.HomeScreen
 object HomeScreenComposable {
 
     @Composable
-    fun HomeScreen(books: List<Book>, onCtaClick: () -> Unit) {
-        val sections = listOf("Books", "Suggestions", "Spotlight", "More Suggestions") // Add a placeholder for Spotlight
+    fun HomeScreen(books: List<Book>, onBookClick: (id: Int) -> Unit, onLoginClick: () -> Unit) {
+        val sections = listOf(
+            "Books",
+            "Suggestions",
+            "Spotlight",
+            "More Suggestions"
+        ) // Add a placeholder for Spotlight
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
@@ -65,7 +70,7 @@ object HomeScreenComposable {
                         ctaText = "Go to login",
                         iconRes = R.drawable.story_tail_logo
                     ) {
-                        onCtaClick.invoke()
+                        onLoginClick.invoke()
                     }
                 }
 
@@ -73,7 +78,11 @@ object HomeScreenComposable {
                 itemsIndexed(sections) { _, title ->
                     when (title) {
                         "Spotlight" -> SpotlightSection(books.take(2)) // Show Spotlight section
-                        else -> BookCarousel(books, title, onCtaClick)            // Show BookCarousel for other sections
+                        else -> BookCarousel(
+                            books,
+                            title,
+                            onBookClick
+                        )            // Show BookCarousel for other sections
                     }
                 }
             }
@@ -82,7 +91,7 @@ object HomeScreenComposable {
 
 
     @Composable
-    fun BookCarousel(books: List<Book>, title: String, onCtaClick: () -> Unit) {
+    fun BookCarousel(books: List<Book>, title: String, onBookClick: (id: Int) -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,7 +115,7 @@ object HomeScreenComposable {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(books.size) { index ->
-                        BookCard(book = books[index], onCtaClick = onCtaClick)
+                        BookCard(book = books[index], onCtaClick = onBookClick)
                     }
                 }
             }
@@ -114,7 +123,7 @@ object HomeScreenComposable {
     }
 
     @Composable
-    fun BookCard(book: Book, modifier: Modifier? = null, onCtaClick: () -> Unit) {
+    fun BookCard(book: Book, modifier: Modifier? = null, onCtaClick: (id: Int) -> Unit) {
         Card(
             modifier = modifier ?: Modifier
                 .width(160.dp)
@@ -130,7 +139,8 @@ object HomeScreenComposable {
                     model = book.imageUrl,
                     contentDescription = book.title,
                     modifier = Modifier
-                        .fillMaxWidth().weight(2f),
+                        .fillMaxWidth()
+                        .weight(2f),
                     contentScale = ContentScale.Fit,
                     placeholder = painterResource(id = R.drawable.story_tail_logo),
                     error = painterResource(id = R.drawable.story_tail_logo)
@@ -139,12 +149,14 @@ object HomeScreenComposable {
                 Text(
                     text = book.title,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(8.dp).weight(1f),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f),
                     maxLines = 2
                 )
                 // Button
                 Button(
-                    onClick = { onCtaClick.invoke() },
+                    onClick = { onCtaClick(book.id) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
@@ -165,7 +177,7 @@ object HomeScreenComposable {
         subtitle: String,
         ctaText: String,
         iconRes: Int,
-        onCtaClick: () -> Unit
+        onLoginClick: () -> Unit
     ) {
         Card(
             modifier = modifier
@@ -197,7 +209,7 @@ object HomeScreenComposable {
                     )
                     // CTA Button
                     Button(
-                        onClick = onCtaClick,
+                        onClick = { onLoginClick.invoke() },
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                     ) {
@@ -268,10 +280,10 @@ object HomeScreenComposable {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // First Book Spotlight
-                BookCard(book = books[0], modifier = Modifier.weight(1f), {})
+                BookCard(book = books[0], modifier = Modifier.weight(1f)) {}
 
                 // Second Book Spotlight
-                BookCard(book = books[1], modifier = Modifier.weight(1f), {})
+                BookCard(book = books[1], modifier = Modifier.weight(1f)) {}
             }
         }
     }
@@ -280,6 +292,7 @@ object HomeScreenComposable {
 
 // Data class for book
 data class Book(
+    val id: Int,
     val title: String,
     val imageUrl: String,
     val isLocked: Boolean
@@ -290,10 +303,10 @@ data class Book(
 @Composable
 fun BookCarouselPreview() {
     val books = listOf(
-        Book("Charlotte's Web", "https://example.com/charlottes_web.jpg", true),
-        Book("The Gruffalo", "https://example.com/the_gruffalo.jpg", true),
-        Book("Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
-        Book("Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
+        Book(0, "Charlotte's Web", "https://example.com/charlottes_web.jpg", true),
+        Book(1, "The Gruffalo", "https://example.com/the_gruffalo.jpg", true),
+        Book(2, "Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
+        Book(3, "Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
     )
-    HomeScreen(books = books, {})
+    HomeScreen(books = books, {}, {})
 }
