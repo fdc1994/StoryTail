@@ -42,7 +42,7 @@ import com.fabiotiago.storytail.ui.home.HomeScreenComposable.HomeScreen
 object HomeScreenComposable {
 
     @Composable
-    fun HomeScreen(books: List<Book>) {
+    fun HomeScreen(books: List<Book>, onCtaClick: () -> Unit) {
         val sections = listOf("Books", "Suggestions", "Spotlight", "More Suggestions") // Add a placeholder for Spotlight
 
         Surface(
@@ -295,5 +295,5 @@ fun BookCarouselPreview() {
         Book("Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
         Book("Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
     )
-    HomeScreen(books = books)
+    HomeScreen(books = books, {})
 }
