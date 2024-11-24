@@ -65,7 +65,7 @@ object HomeScreenComposable {
                         ctaText = "Go to login",
                         iconRes = R.drawable.story_tail_logo
                     ) {
-                        // Handle click
+                        onCtaClick.invoke()
                     }
                 }
 
@@ -73,7 +73,7 @@ object HomeScreenComposable {
                 itemsIndexed(sections) { _, title ->
                     when (title) {
                         "Spotlight" -> SpotlightSection(books.take(2)) // Show Spotlight section
-                        else -> BookCarousel(books, title)            // Show BookCarousel for other sections
+                        else -> BookCarousel(books, title, onCtaClick)            // Show BookCarousel for other sections
                     }
                 }
             }
@@ -82,7 +82,7 @@ object HomeScreenComposable {
 
 
     @Composable
-    fun BookCarousel(books: List<Book>, title: String) {
+    fun BookCarousel(books: List<Book>, title: String, onCtaClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,7 +106,7 @@ object HomeScreenComposable {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(books.size) { index ->
-                        BookCard(book = books[index])
+                        BookCard(book = books[index], onCtaClick = onCtaClick)
                     }
                 }
             }
@@ -114,7 +114,7 @@ object HomeScreenComposable {
     }
 
     @Composable
-    fun BookCard(book: Book, modifier: Modifier? = null) {
+    fun BookCard(book: Book, modifier: Modifier? = null, onCtaClick: () -> Unit) {
         Card(
             modifier = modifier ?: Modifier
                 .width(160.dp)
@@ -144,7 +144,7 @@ object HomeScreenComposable {
                 )
                 // Button
                 Button(
-                    onClick = { /* Handle click */ },
+                    onClick = { onCtaClick.invoke() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
@@ -268,10 +268,10 @@ object HomeScreenComposable {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // First Book Spotlight
-                BookCard(book = books[0], modifier = Modifier.weight(1f))
+                BookCard(book = books[0], modifier = Modifier.weight(1f), {})
 
                 // Second Book Spotlight
-                BookCard(book = books[1], modifier = Modifier.weight(1f))
+                BookCard(book = books[1], modifier = Modifier.weight(1f), {})
             }
         }
     }

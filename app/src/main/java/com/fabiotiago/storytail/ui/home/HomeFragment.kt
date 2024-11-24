@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.fabiotiago.storytail.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -40,7 +41,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToBook() {
-
+        findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToBookFragment())
     }
 
     override fun onDestroyView() {
