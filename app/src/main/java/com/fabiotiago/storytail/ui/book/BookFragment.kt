@@ -1,18 +1,22 @@
 package com.fabiotiago.storytail.ui.book
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.fabiotiago.storytail.R
+import android.widget.Toast
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.fabiotiago.storytail.ui.home.Book
 
 class BookFragment : Fragment() {
 
     companion object {
         fun newInstance() = BookFragment()
     }
+
+    val book = Book(0, "Charlotte's Web", "https://example.com/charlottes_web.jpg", false)
 
     private val viewModel: BookViewModel by viewModels()
 
@@ -26,6 +30,13 @@ class BookFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_book, container, false)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                BookComposeUi.BookProductPage(
+                    book
+                ) { Toast.makeText(requireContext(), "Clicked Book", Toast.LENGTH_LONG).show() }
+            }
+
+        }
     }
 }
