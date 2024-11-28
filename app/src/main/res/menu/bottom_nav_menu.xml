@@ -17,8 +17,8 @@
         android:title="@string/title_account" />
 
     <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/ic_settings_black_24"
-        android:title="@string/title_settings" />
+        android:id="@+id/navigation_about"
+        android:icon="@drawable/storytail_logo_nav_bar"
+        android:title="@string/title_about" />
 
 </menu>
