@@ -28,9 +28,9 @@
         tools:layout="@layout/fragment_user_account" />
 
     <fragment
-        android:id="@+id/navigation_settings"
+        android:id="@+id/navigation_about"
         android:name="com.fabiotiago.storytail.ui.about.AboutFragment"
-        android:label="@string/title_settings"
+        android:label="@string/title_about"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/bookFragment"
