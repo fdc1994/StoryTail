@@ -4,26 +4,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import com.fabiotiago.storytail.databinding.FragmentUserAccountBinding
 
 class UserAccountFragment : Fragment() {
+
+    private val userAccountViewModel: UserAccountViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val userAccountViewModel: UserAccountViewModel by viewModels()
+
+        val state = userAccountViewModel.userState
 
         return ComposeView(requireContext()).apply {
             setContent {
-                UserAccountComposeUi.UserAccountScreen()
+                UserAccountComposeUi.UserAccountScreen(
+                    state,
+                    ::onLogin,
+                    ::onLogout
+                )
             }
         }
     }
+
+    private fun onLogin(email: String, password: String) =
+        userAccountViewModel.onLogin(email, password)
+
+    private fun onLogout() = userAccountViewModel.onLogout()
 }

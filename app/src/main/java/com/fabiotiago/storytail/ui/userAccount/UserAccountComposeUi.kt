@@ -8,38 +8,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.StateFlow
 
 
 object UserAccountComposeUi {
 
     @Composable
-    fun UserAccountScreen() {
+    fun UserAccountScreen(
+        userAccountState: StateFlow<UserAccountState>,
+        onLogin: (String, String) -> Unit,
+        onLogout: () -> Unit
+    ) {
+        val state by userAccountState.collectAsState()
         // State for managing login status and user data
-        var isLoggedIn by rememberSaveable { mutableStateOf(false) }
-        var userName by rememberSaveable { mutableStateOf("") }
-        var userEmail by rememberSaveable { mutableStateOf("") }
 
-        if (isLoggedIn) {
+        if (state.isLoggedIn) {
             // Show post-login UI
-            PostLoginScreen(name = userName, email = userEmail) {
-                isLoggedIn = false // Logout action
-            }
+            PostLoginScreen(email = state.email, onLogout = onLogout)
         } else {
             // Show login UI
             LoginForm(
-                onLogin = { name, email ->
-                    userName = name
-                    userEmail = email
-                    isLoggedIn = true
-                }
+                onLogin = onLogin
             )
         }
     }
 
     @Composable
     fun LoginForm(onLogin: (String, String) -> Unit) {
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+        var email by rememberSaveable { mutableStateOf("") }
+        var password by rememberSaveable { mutableStateOf("") }
 
         Column(
             modifier = Modifier
@@ -77,7 +74,7 @@ object UserAccountComposeUi {
             Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
-                        onLogin(email, password) // Pass user details to the parent
+                        onLogin.invoke(email, password)
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -88,7 +85,7 @@ object UserAccountComposeUi {
     }
 
     @Composable
-    fun PostLoginScreen(name: String, email: String, onLogout: () -> Unit) {
+    fun PostLoginScreen(email: String, onLogout: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,15 +93,11 @@ object UserAccountComposeUi {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Welcome, $name!", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Welcome, $email!", style = MaterialTheme.typography.titleLarge)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Email: $email", style = MaterialTheme.typography.bodyLarge)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(onClick = onLogout, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { onLogout.invoke() }, modifier = Modifier.fillMaxWidth()) {
                 Text("Logout")
             }
         }

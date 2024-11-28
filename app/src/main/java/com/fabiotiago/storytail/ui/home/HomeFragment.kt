@@ -45,7 +45,7 @@ class HomeFragment : Fragment() {
     private fun navigateToLogin() {
         val navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
         navView.selectedItemId = R.id.navigation_user_account
-        findNavController().navigate(R.id.navigation_user_account)    }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
