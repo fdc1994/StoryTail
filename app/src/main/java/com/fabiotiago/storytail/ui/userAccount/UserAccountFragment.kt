@@ -5,38 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.fabiotiago.storytail.databinding.FragmentUserAccountBinding
 
 class UserAccountFragment : Fragment() {
-
-    private var _binding: FragmentUserAccountBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val userAccountViewModel =
-            ViewModelProvider(this).get(UserAccountViewModel::class.java)
+        val userAccountViewModel: UserAccountViewModel by viewModels()
 
-        _binding = FragmentUserAccountBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textNotifications
-        userAccountViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        return ComposeView(requireContext()).apply {
+            setContent {
+                UserAccountComposeUi.UserAccountScreen()
+            }
         }
-        return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

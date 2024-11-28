@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.databinding.FragmentHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeFragment : Fragment() {
+
+    val homeViewModel:HomeViewModel by viewModels()
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -23,17 +25,11 @@ class HomeFragment : Fragment() {
         Book(3, "Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
     )
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
 
         return ComposeView(requireContext()).apply {
             setContent {
