@@ -9,7 +9,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.fabiotiago.storytail.ui.home.Book
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookFragment : Fragment() {
 
     companion object {

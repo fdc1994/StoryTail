@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
-import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.ui.userAccount.UserAccountComposeUi
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AboutFragment : Fragment() {
 
     private val viewModel: AboutViewModel by viewModels()
