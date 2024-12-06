@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.userAccount
+package com.fabiotiago.storytail.app.ui.userAccount
 
 import android.os.Bundle
 import android.view.LayoutInflater

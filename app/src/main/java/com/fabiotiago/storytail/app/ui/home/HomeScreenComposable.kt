@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.home
+package com.fabiotiago.storytail.app.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,31 +18,96 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.ui.home.HomeScreenComposable.HomeScreen
+import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
+import com.google.gson.annotations.SerializedName
 
 object HomeScreenComposable {
 
     @Composable
-    fun HomeScreen(books: List<Book>, onBookClick: (id: Int) -> Unit, onLoginClick: () -> Unit) {
+    fun HomeScreen(viewModel: HomeViewModel, onBookClick: (id: Int) -> Unit, onLoginClick: () -> Unit) {
+        val viewState by viewModel.viewState.collectAsState(initial = Loading)
+        when(viewState) {
+            is HomeViewModel.HomeViewState.ContentLoaded -> {
+                val content = (viewState as HomeViewModel.HomeViewState.ContentLoaded)
+                MainContent(content.books, onLoginClick, onBookClick)
+            }
+            HomeViewModel.HomeViewState.Error -> ErrorView()
+            Loading -> LoadingView()
+        }
+
+    }
+
+    @Composable
+    fun ErrorView(
+        modifier: Modifier = Modifier,
+        errorMessage: String = "An error occurred. Please try again.",
+        onRetryClick: (() -> Unit)? = null,
+        textStyle: TextStyle = MaterialTheme.typography.bodySmall,
+        textColor: Color = MaterialTheme.colorScheme.onBackground,
+        buttonText: String = "Retry",
+        buttonStyle: ButtonColors = ButtonDefaults.buttonColors()
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = errorMessage,
+                    style = textStyle,
+                    color = textColor,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                onRetryClick?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = it,
+                        colors = buttonStyle
+                    ) {
+                        Text(text = buttonText)
+                    }
+                }
+            }
+        }
+    }
+
+
+    @Composable
+    private fun MainContent(
+        books: List<Book>,
+        onLoginClick: () -> Unit,
+        onBookClick: (id: Int) -> Unit
+    ) {
         val sections = listOf(
             "Books",
             "Suggestions",
@@ -88,6 +153,34 @@ object HomeScreenComposable {
             }
         }
     }
+
+    @Composable
+    fun LoadingView(
+        modifier: Modifier = Modifier,
+        loadingText: String? = null,
+        textStyle: TextStyle = MaterialTheme.typography.bodySmall,
+        textColor: Color = MaterialTheme.colorScheme.onBackground,
+        indicatorColor: Color = MaterialTheme.colorScheme.primary,
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(color = indicatorColor)
+                loadingText?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = it, style = textStyle, color = textColor)
+                }
+            }
+        }
+    }
+
 
 
     @Composable
@@ -136,7 +229,7 @@ object HomeScreenComposable {
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 AsyncImage(
-                    model = book.imageUrl,
+                    model = book.coverUrl,
                     contentDescription = book.title,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -163,7 +256,7 @@ object HomeScreenComposable {
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                 ) {
-                    val text = if (book.isLocked) "PREVIEW" else "READ"
+                    val text = if (book.accessLevel == 3) "PREVIEW" else "READ"
                     Text(text)
                 }
             }
@@ -290,25 +383,40 @@ object HomeScreenComposable {
 
 }
 
-// Data class for book
+
 data class Book(
+    @SerializedName("id")
     val id: Int,
+
+    @SerializedName("title")
     val title: String,
-    val imageUrl: String,
-    val isLocked: Boolean,
-    val author: String = "J.R.R. Tolkien",
-    val description: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+
+    @SerializedName("description")
+    val description: String,
+
+    @SerializedName("cover_url")
+    val coverUrl: String?,
+
+    @SerializedName("read_time")
+    val readTime: Int,
+
+    @SerializedName("age_group")
+    val ageGroup: Int,
+
+    @SerializedName("access_level")
+    val accessLevel: Int,
+
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("author")
+    val author: String ? = "Unknown"
 )
 
-// Preview
-@Preview(showBackground = true)
-@Composable
-fun BookCarouselPreview() {
-    val books = listOf(
-        Book(0, "Charlotte's Web", "https://example.com/charlottes_web.jpg", true),
-        Book(1, "The Gruffalo", "https://example.com/the_gruffalo.jpg", true),
-        Book(2, "Flynn's Perfect Pet", "https://example.com/flynns_perfect_pet.jpg", false),
-        Book(3, "Freddie and the Fairy", "https://example.com/freddie_and_the_fairy.jpg", false)
-    )
-    HomeScreen(books = books, {}, {})
-}
+data class BooksResponse(
+    @SerializedName("books")
+    val books: List<Book>
+)

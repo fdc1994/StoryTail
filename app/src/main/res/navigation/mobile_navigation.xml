@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.fabiotiago.storytail.ui.home.HomeFragment"
+        android:name="com.fabiotiago.storytail.app.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -17,23 +17,23 @@
 
     <fragment
         android:id="@+id/navigation_favorites"
-        android:name="com.fabiotiago.storytail.ui.favorites.FavoritesFragment"
+        android:name="com.fabiotiago.storytail.app.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
         tools:layout="@layout/fragment_favorites" />
 
     <fragment
         android:id="@+id/navigation_user_account"
-        android:name="com.fabiotiago.storytail.ui.userAccount.UserAccountFragment"
+        android:name="com.fabiotiago.storytail.app.ui.userAccount.UserAccountFragment"
         android:label="@string/title_account"
         tools:layout="@layout/fragment_user_account" />
 
     <fragment
         android:id="@+id/navigation_about"
-        android:name="com.fabiotiago.storytail.ui.about.AboutFragment"
+        android:name="com.fabiotiago.storytail.app.ui.about.AboutFragment"
         android:label="@string/title_about"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/bookFragment"
-        android:name="com.fabiotiago.storytail.ui.book.BookFragment"
+        android:name="com.fabiotiago.storytail.app.ui.book.BookFragment"
         android:label="BookFragment" />
 </navigation>

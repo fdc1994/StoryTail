@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail
+package com.fabiotiago.storytail.app
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +29,10 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_favorites, R.id.navigation_user_account, R.id.navigation_about
+                R.id.navigation_home,
+                R.id.navigation_favorites,
+                R.id.navigation_user_account,
+                R.id.navigation_about
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

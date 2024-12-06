@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.book
+package com.fabiotiago.storytail.app.ui.book
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.ui.home.Book
+import com.fabiotiago.storytail.app.ui.home.Book
 
 object BookComposeUi {
 
@@ -47,7 +47,7 @@ object BookComposeUi {
             ) {
                 // Book Cover
                 AsyncImage(
-                    model = book.imageUrl,
+                    model = book.coverUrl,
                     contentDescription = book.title,
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
@@ -104,16 +104,16 @@ object BookComposeUi {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Button(
-                        onClick = { onActionClick(if (book.isLocked) "PREVIEW" else "READ") },
+                        onClick = { onActionClick(if (book.accessLevel >2) "PREVIEW" else "READ") },
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
                             .height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                     ) {
-                        Text(text = if (book.isLocked) "PREVIEW" else "READ")
+                        Text(text = if (book.accessLevel >2) "PREVIEW" else "READ")
                     }
 
-                    if (book.isLocked) {
+                    if (book.accessLevel >2) {
                         Button(
                             onClick = { onActionClick("BUY") },
                             modifier = Modifier

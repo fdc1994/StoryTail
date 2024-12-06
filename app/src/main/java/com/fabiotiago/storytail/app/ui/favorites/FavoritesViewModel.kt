@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.favorites
+package com.fabiotiago.storytail.app.ui.favorites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.userAccount
+package com.fabiotiago.storytail.app.ui.userAccount
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

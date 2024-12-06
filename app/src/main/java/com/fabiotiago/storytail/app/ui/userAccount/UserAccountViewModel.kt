@@ -1,17 +1,18 @@
-package com.fabiotiago.storytail.ui.userAccount
+package com.fabiotiago.storytail.app.ui.userAccount
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class UserAccountViewModel : ViewModel() {
+class UserAccountViewModel @Inject constructor(
+
+) : ViewModel() {
 
     private val _userState = MutableStateFlow(UserAccountState())
     val userState: StateFlow<UserAccountState> = _userState
 
-    fun onLogin(email: String, password:String) {
+    fun onLogin(email: String, password: String) {
         _userState.value = _userState.value.copy(isLoggedIn = true, email = email)
     }
 

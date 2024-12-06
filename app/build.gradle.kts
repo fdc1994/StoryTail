@@ -57,7 +57,9 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.ui.tooling.preview.android)
-    implementation("io.coil-kt:coil-compose:2.5.0")  // Coil for Compose
+    implementation(libs.coil.compose)  // Coil for Compose
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGSON)
 
     kapt(libs.hilt.android.compiler)
     testImplementation(libs.junit)

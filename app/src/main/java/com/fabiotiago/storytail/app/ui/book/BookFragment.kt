@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.book
+package com.fabiotiago.storytail.app.ui.book
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.fabiotiago.storytail.ui.home.Book
+import com.fabiotiago.storytail.app.ui.home.Book
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,8 +17,6 @@ class BookFragment : Fragment() {
     companion object {
         fun newInstance() = BookFragment()
     }
-
-    val book = Book(0, "Charlotte's Web", "https://example.com/charlottes_web.jpg", false)
 
     private val viewModel: BookViewModel by viewModels()
 
@@ -35,7 +33,17 @@ class BookFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 BookComposeUi.BookProductPage(
-                    book
+                    Book(
+                        1,
+                        "Title",
+                        "Description",
+                        null,
+                        20,
+                        2,
+                        2,
+                        "",
+                        ""
+                    )
                 ) { Toast.makeText(requireContext(), "Clicked Book", Toast.LENGTH_LONG).show() }
             }
 

@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.favorites
+package com.fabiotiago.storytail.app.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater

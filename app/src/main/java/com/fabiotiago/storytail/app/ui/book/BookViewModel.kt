@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.book
+package com.fabiotiago.storytail.app.ui.book
 
 import androidx.lifecycle.ViewModel
 

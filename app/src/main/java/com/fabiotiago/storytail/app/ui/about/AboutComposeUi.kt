@@ -1,4 +1,4 @@
-package com.fabiotiago.storytail.ui.about
+package com.fabiotiago.storytail.app.ui.about
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
