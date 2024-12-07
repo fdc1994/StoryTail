@@ -2,6 +2,7 @@ package com.fabiotiago.storytail.app.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,11 +41,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.app.ui.home.HomeScreenComposable.PreviewMainContent
 import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -64,9 +63,10 @@ object HomeScreenComposable {
                 MainContent(
                     content.books,
                     content.popularBooks,
-                    content.popularBooks,
+                    content.favourites,
                     onLoginClick,
-                    onBookClick
+                    onBookClick,
+                    viewModel::addOrRemoveFavourite
                 )
             }
 
@@ -123,7 +123,8 @@ object HomeScreenComposable {
         popularBooks: List<Book>?,
         favourites: List<Book>?,
         onLoginClick: () -> Unit,
-        onBookClick: (book: Book) -> Unit
+        onBookClick: (book: Book) -> Unit,
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
     ) {
         val sections = listOf(
             "Books",
@@ -162,14 +163,16 @@ object HomeScreenComposable {
                         "Spotlight" -> popularBooks?.let {
                             SpotlightSection(
                                 it,
-                                favourites
+                                favourites,
+                                onFavoriteClick
                             )
                         } // Show Spotlight section
                         else -> BookCarousel(
                             books,
                             title,
                             favourites,
-                            onBookClick
+                            onBookClick,
+                            onFavoriteClick
                         )
                     }
                 }
@@ -210,7 +213,8 @@ object HomeScreenComposable {
         books: List<Book>,
         title: String,
         favourites: List<Book>?,
-        onBookClick: (book: Book) -> Unit
+        onBookClick: (book: Book) -> Unit,
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
     ) {
         Box(
             modifier = Modifier
@@ -239,7 +243,8 @@ object HomeScreenComposable {
                         BookCard(
                             book = book,
                             isFavourite = favourites?.contains(book) == true,
-                            onCtaClick = onBookClick
+                            onCtaClick = onBookClick,
+                            onFavoriteClick = onFavoriteClick
                         )
                     }
                 }
@@ -252,6 +257,7 @@ object HomeScreenComposable {
         book: Book,
         isFavourite: Boolean,
         modifier: Modifier? = null,
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit,
         onCtaClick: (book: Book) -> Unit
     ) {
         val favouriteIcon =
@@ -269,9 +275,12 @@ object HomeScreenComposable {
                         .height(40.dp)
                         .width(40.dp)
                         .align(Alignment.TopEnd)
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 10.dp)
+                        .clickable {
+                            onFavoriteClick.invoke(isFavourite, book.id)
+                        },
                     painter = painterResource(favouriteIcon),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -379,7 +388,11 @@ object HomeScreenComposable {
     }
 
     @Composable
-    fun SpotlightSection(books: List<Book>, favourites: List<Book>?) {
+    fun SpotlightSection(
+        books: List<Book>,
+        favourites: List<Book>?,
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
+    ) {
         if (books.size < 2) return // Ensure at least two books are available
 
         Column(
@@ -427,14 +440,16 @@ object HomeScreenComposable {
                 BookCard(
                     book = books[0],
                     isFavourite = favourites?.contains(books[0]) == true,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onFavoriteClick = onFavoriteClick
                 ) {}
 
                 // Second Book Spotlight
                 BookCard(
                     book = books[1],
                     isFavourite = favourites?.contains(books[1]) == true,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onFavoriteClick = onFavoriteClick
                 ) {}
             }
         }
@@ -447,15 +462,16 @@ object HomeScreenComposable {
         popularBooks: List<Book>?,
         favourites: List<Book>?,
         onLoginClick: () -> Unit,
-        onBookClick: (book: Book) -> Unit
+        onBookClick: (book: Book) -> Unit,
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
     ) {
-        MainContent(books, popularBooks, favourites, onLoginClick, onBookClick)
+        MainContent(books, popularBooks, favourites, onLoginClick, onBookClick, onFavoriteClick)
     }
 }
 
 
 data class Book(
-    @SerializedName("id")
+    @SerializedName("book_id")
     val id: Int,
 
     @SerializedName("title")
@@ -483,10 +499,15 @@ data class Book(
     val updatedAt: String,
 
     @SerializedName("authors")
-    val author: String ? = "Unknown"
-): Serializable
+    val author: String? = "Unknown"
+) : Serializable
 
 data class BooksResponse(
     @SerializedName("books")
     val books: List<Book>
-): Serializable
+) : Serializable
+
+data class FavouritesResponse(
+    @SerializedName("favorites")
+    val books: List<Book>
+) : Serializable
