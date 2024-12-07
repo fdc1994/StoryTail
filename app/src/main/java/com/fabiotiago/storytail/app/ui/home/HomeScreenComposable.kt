@@ -1,5 +1,6 @@
 package com.fabiotiago.storytail.app.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,9 +40,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fabiotiago.storytail.R
+import com.fabiotiago.storytail.app.ui.home.HomeScreenComposable.PreviewMainContent
 import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -49,13 +52,24 @@ import java.io.Serializable
 object HomeScreenComposable {
 
     @Composable
-    fun HomeScreen(viewModel: HomeViewModel, onBookClick: (book: Book) -> Unit, onLoginClick: () -> Unit) {
+    fun HomeScreen(
+        viewModel: HomeViewModel,
+        onBookClick: (book: Book) -> Unit,
+        onLoginClick: () -> Unit
+    ) {
         val viewState by viewModel.viewState.collectAsState(initial = Loading)
-        when(viewState) {
+        when (viewState) {
             is HomeViewModel.HomeViewState.ContentLoaded -> {
                 val content = (viewState as HomeViewModel.HomeViewState.ContentLoaded)
-                MainContent(content.books, content.popularBooks, onLoginClick, onBookClick)
+                MainContent(
+                    content.books,
+                    content.popularBooks,
+                    content.popularBooks,
+                    onLoginClick,
+                    onBookClick
+                )
             }
+
             HomeViewModel.HomeViewState.Error -> ErrorView()
             Loading -> LoadingView()
         }
@@ -107,6 +121,7 @@ object HomeScreenComposable {
     private fun MainContent(
         books: List<Book>,
         popularBooks: List<Book>?,
+        favourites: List<Book>?,
         onLoginClick: () -> Unit,
         onBookClick: (book: Book) -> Unit
     ) {
@@ -144,12 +159,18 @@ object HomeScreenComposable {
                 // Dynamically mix Spotlight and Carousels
                 itemsIndexed(sections) { _, title ->
                     when (title) {
-                        "Spotlight" -> popularBooks?.let { SpotlightSection(it) } // Show Spotlight section
+                        "Spotlight" -> popularBooks?.let {
+                            SpotlightSection(
+                                it,
+                                favourites
+                            )
+                        } // Show Spotlight section
                         else -> BookCarousel(
                             books,
                             title,
+                            favourites,
                             onBookClick
-                        )            // Show BookCarousel for other sections
+                        )
                     }
                 }
             }
@@ -184,9 +205,13 @@ object HomeScreenComposable {
     }
 
 
-
     @Composable
-    fun BookCarousel(books: List<Book>, title: String, onBookClick: (book: Book) -> Unit) {
+    fun BookCarousel(
+        books: List<Book>,
+        title: String,
+        favourites: List<Book>?,
+        onBookClick: (book: Book) -> Unit
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -210,7 +235,12 @@ object HomeScreenComposable {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(books.size) { index ->
-                        BookCard(book = books[index], onCtaClick = onBookClick)
+                        val book = books[index]
+                        BookCard(
+                            book = book,
+                            isFavourite = favourites?.contains(book) == true,
+                            onCtaClick = onBookClick
+                        )
                     }
                 }
             }
@@ -218,7 +248,14 @@ object HomeScreenComposable {
     }
 
     @Composable
-    fun BookCard(book: Book, modifier: Modifier? = null, onCtaClick: (book: Book) -> Unit) {
+    fun BookCard(
+        book: Book,
+        isFavourite: Boolean,
+        modifier: Modifier? = null,
+        onCtaClick: (book: Book) -> Unit
+    ) {
+        val favouriteIcon =
+            if (isFavourite) R.drawable.ic_star_filled else R.drawable.ic_star_not_filled
         Card(
             modifier = modifier ?: Modifier
                 .width(160.dp)
@@ -226,42 +263,54 @@ object HomeScreenComposable {
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-                AsyncImage(
-                    model = book.coverUrl,
-                    contentDescription = book.title,
+            Box(modifier = Modifier.fillMaxSize()) {
+                Image(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(2f),
-                    contentScale = ContentScale.Fit,
-                    placeholder = painterResource(id = R.drawable.story_tail_logo),
-                    error = painterResource(id = R.drawable.story_tail_logo)
+                        .height(40.dp)
+                        .width(40.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(horizontal = 10.dp),
+                    painter = painterResource(favouriteIcon),
+                    contentDescription = ""
                 )
-                // Book Title
-                Text(
-                    text = book.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .weight(1f),
-                    maxLines = 2
-                )
-                // Button
-                Button(
-                    onClick = { onCtaClick(book) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceAround
                 ) {
-                    val text = if (book.accessLevel == 3) "PREVIEW" else "READ"
-                    Text(text)
+                    AsyncImage(
+                        model = book.coverUrl,
+                        contentDescription = book.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(2f),
+                        contentScale = ContentScale.Fit,
+                        placeholder = painterResource(id = R.drawable.story_tail_logo),
+                        error = painterResource(id = R.drawable.story_tail_logo)
+                    )
+                    // Book Title
+                    Text(
+                        text = book.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f),
+                        maxLines = 2
+                    )
+                    // Button
+                    Button(
+                        onClick = { onCtaClick(book) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .weight(1f),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
+                    ) {
+                        val text = if (book.accessLevel == 3) "PREVIEW" else "READ"
+                        Text(text)
+                    }
                 }
             }
+
         }
     }
 
@@ -330,7 +379,7 @@ object HomeScreenComposable {
     }
 
     @Composable
-    fun SpotlightSection(books: List<Book>) {
+    fun SpotlightSection(books: List<Book>, favourites: List<Book>?) {
         if (books.size < 2) return // Ensure at least two books are available
 
         Column(
@@ -375,14 +424,33 @@ object HomeScreenComposable {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // First Book Spotlight
-                BookCard(book = books[0], modifier = Modifier.weight(1f)) {}
+                BookCard(
+                    book = books[0],
+                    isFavourite = favourites?.contains(books[0]) == true,
+                    modifier = Modifier.weight(1f)
+                ) {}
 
                 // Second Book Spotlight
-                BookCard(book = books[1], modifier = Modifier.weight(1f)) {}
+                BookCard(
+                    book = books[1],
+                    isFavourite = favourites?.contains(books[1]) == true,
+                    modifier = Modifier.weight(1f)
+                ) {}
             }
         }
     }
 
+    // Public function that exposes MainContent for previews
+    @Composable
+    fun PreviewMainContent(
+        books: List<Book>,
+        popularBooks: List<Book>?,
+        favourites: List<Book>?,
+        onLoginClick: () -> Unit,
+        onBookClick: (book: Book) -> Unit
+    ) {
+        MainContent(books, popularBooks, favourites, onLoginClick, onBookClick)
+    }
 }
 
 
