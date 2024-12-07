@@ -17,7 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -44,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fabiotiago.storytail.R
+import com.fabiotiago.storytail.app.ui.favorites.FavoritesViewModel
 import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -72,6 +79,29 @@ object HomeScreenComposable {
 
             HomeViewModel.HomeViewState.Error -> ErrorView()
             Loading -> LoadingView()
+        }
+
+    }
+
+    @Composable
+    fun FavoritesScreen(
+        viewModel: FavoritesViewModel,
+        onBookClick: (book: Book) -> Unit,
+    ) {
+        val viewState by viewModel.viewState.collectAsState(initial = FavoritesViewModel.FavoritesViewState.Loading)
+        when (viewState) {
+            is FavoritesViewModel.FavoritesViewState.ContentLoaded -> {
+                val content = (viewState as FavoritesViewModel.FavoritesViewState.ContentLoaded)
+                FavouritesSection(
+                    content.books,
+                    onBookClick,
+                    viewModel::addOrRemoveFavourite
+                )
+            }
+
+            FavoritesViewModel.FavoritesViewState.Empty -> EmptyFavoritesView()
+            FavoritesViewModel.FavoritesViewState.Error -> ErrorView()
+            FavoritesViewModel.FavoritesViewState.Loading -> LoadingView()
         }
 
     }
@@ -452,6 +482,46 @@ object HomeScreenComposable {
                     onFavoriteClick = onFavoriteClick
                 ) {}
             }
+        }
+    }
+
+    @Composable
+    fun FavouritesSection(
+        favourites: List<Book>,
+        onBookClick: (book: Book) -> Unit,
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
+    ) {
+        LazyVerticalStaggeredGrid (
+            columns = StaggeredGridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalItemSpacing = 20.dp,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            itemsIndexed(favourites) { _, book ->
+                BookCard(
+                    book = book,
+                    isFavourite = true,
+                    onCtaClick = { onBookClick(book) },
+                    onFavoriteClick = onFavoriteClick
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun EmptyFavoritesView() {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No Favorites yet. Start adding some!",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
+            )
         }
     }
 

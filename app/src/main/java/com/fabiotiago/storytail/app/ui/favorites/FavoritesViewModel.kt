@@ -1,13 +1,68 @@
 package com.fabiotiago.storytail.app.ui.favorites
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.fabiotiago.storytail.app.ui.home.Book
+import com.fabiotiago.storytail.domain.repository.FavouritesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoritesViewModel : ViewModel() {
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
+    private val favouritesRepository: FavouritesRepository
+) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is the favorites Fragment"
+    private val _viewState: MutableSharedFlow<FavoritesViewState> = MutableSharedFlow(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+    val viewState = _viewState.asSharedFlow()
+
+    fun init() {
+        getBooks()
     }
-    val text: LiveData<String> = _text
+
+    private fun getBooks() {
+        viewModelScope.launch {
+            val books = favouritesRepository.getFavourites()
+            if (books != null) {
+                _viewState.emit(FavoritesViewState.ContentLoaded(books))
+            } else {
+                _viewState.emit(FavoritesViewState.Error)
+            }
+        }
+    }
+
+    fun addOrRemoveFavourite(isFavourite: Boolean, bookId: Int) {
+        viewModelScope.launch{
+            if(isFavourite) {
+                favouritesRepository.removeFavourite(
+                    userId = 1,
+                    bookId = bookId
+                )
+            } else {
+                favouritesRepository.addFavourite(
+                    userId = 1,
+                    bookId = bookId
+                )
+            }
+            getBooks()
+        }
+    }
+
+
+    sealed class FavoritesViewState {
+        data class ContentLoaded(
+            val books :List<Book>
+        ) : FavoritesViewState()
+        data object Loading : FavoritesViewState()
+        data object Empty : FavoritesViewState()
+        data object Error : FavoritesViewState()
+    }
+
+
 }

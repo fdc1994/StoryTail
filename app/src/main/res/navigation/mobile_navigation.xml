@@ -19,7 +19,11 @@
         android:id="@+id/navigation_favorites"
         android:name="com.fabiotiago.storytail.app.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_navigation_favorites_to_bookFragment"
+            app:destination="@id/bookFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_user_account"
