@@ -7,4 +7,7 @@ interface StoryTailService {
 
     @GET("/books")
     suspend fun books(): BooksResponse
+
+    @GET("/popular-books")
+    suspend fun popularBooks(): BooksResponse
 }

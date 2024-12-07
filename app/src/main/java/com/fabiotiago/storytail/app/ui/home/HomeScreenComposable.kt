@@ -44,16 +44,17 @@ import coil.compose.AsyncImage
 import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 object HomeScreenComposable {
 
     @Composable
-    fun HomeScreen(viewModel: HomeViewModel, onBookClick: (id: Int) -> Unit, onLoginClick: () -> Unit) {
+    fun HomeScreen(viewModel: HomeViewModel, onBookClick: (book: Book) -> Unit, onLoginClick: () -> Unit) {
         val viewState by viewModel.viewState.collectAsState(initial = Loading)
         when(viewState) {
             is HomeViewModel.HomeViewState.ContentLoaded -> {
                 val content = (viewState as HomeViewModel.HomeViewState.ContentLoaded)
-                MainContent(content.books, onLoginClick, onBookClick)
+                MainContent(content.books, content.popularBooks, onLoginClick, onBookClick)
             }
             HomeViewModel.HomeViewState.Error -> ErrorView()
             Loading -> LoadingView()
@@ -105,8 +106,9 @@ object HomeScreenComposable {
     @Composable
     private fun MainContent(
         books: List<Book>,
+        popularBooks: List<Book>?,
         onLoginClick: () -> Unit,
-        onBookClick: (id: Int) -> Unit
+        onBookClick: (book: Book) -> Unit
     ) {
         val sections = listOf(
             "Books",
@@ -142,7 +144,7 @@ object HomeScreenComposable {
                 // Dynamically mix Spotlight and Carousels
                 itemsIndexed(sections) { _, title ->
                     when (title) {
-                        "Spotlight" -> SpotlightSection(books.take(2)) // Show Spotlight section
+                        "Spotlight" -> popularBooks?.let { SpotlightSection(it) } // Show Spotlight section
                         else -> BookCarousel(
                             books,
                             title,
@@ -184,7 +186,7 @@ object HomeScreenComposable {
 
 
     @Composable
-    fun BookCarousel(books: List<Book>, title: String, onBookClick: (id: Int) -> Unit) {
+    fun BookCarousel(books: List<Book>, title: String, onBookClick: (book: Book) -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -216,7 +218,7 @@ object HomeScreenComposable {
     }
 
     @Composable
-    fun BookCard(book: Book, modifier: Modifier? = null, onCtaClick: (id: Int) -> Unit) {
+    fun BookCard(book: Book, modifier: Modifier? = null, onCtaClick: (book: Book) -> Unit) {
         Card(
             modifier = modifier ?: Modifier
                 .width(160.dp)
@@ -249,7 +251,7 @@ object HomeScreenComposable {
                 )
                 // Button
                 Button(
-                    onClick = { onCtaClick(book.id) },
+                    onClick = { onCtaClick(book) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
@@ -412,11 +414,11 @@ data class Book(
     @SerializedName("updated_at")
     val updatedAt: String,
 
-    @SerializedName("author")
+    @SerializedName("authors")
     val author: String ? = "Unknown"
-)
+): Serializable
 
 data class BooksResponse(
     @SerializedName("books")
     val books: List<Book>
-)
+): Serializable

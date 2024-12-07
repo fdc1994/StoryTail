@@ -35,5 +35,9 @@
     <fragment
         android:id="@+id/bookFragment"
         android:name="com.fabiotiago.storytail.app.ui.book.BookFragment"
-        android:label="BookFragment" />
+        android:label="BookFragment" >
+        <argument
+            android:name="book"
+            app:argType="com.fabiotiago.storytail.app.ui.home.Book" />
+    </fragment>
 </navigation>

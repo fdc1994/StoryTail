@@ -39,8 +39,8 @@ class HomeFragment : Fragment() {
         homeViewModel.init()
     }
 
-    private fun navigateToBook(id: Int) {
-        findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToBookFragment())
+    private fun navigateToBook(book: Book) {
+        findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToBookFragment(book))
     }
 
     private fun navigateToLogin() {

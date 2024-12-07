@@ -30,8 +30,9 @@ class HomeViewModel @Inject constructor(
     fun init() {
         viewModelScope.launch{
             val books = booksRepository.getBooks()
+            val popularBooks = booksRepository.getPopularBooks()
             if (books != null) {
-                _viewState.emit(HomeViewState.ContentLoaded(books))
+                _viewState.emit(HomeViewState.ContentLoaded(books, popularBooks))
             } else {
                 _viewState.emit(HomeViewState.Error)
             }
@@ -41,7 +42,8 @@ class HomeViewModel @Inject constructor(
 
     sealed class HomeViewState {
         data class ContentLoaded(
-            val books :List<Book>
+            val books :List<Book>,
+            val popularBooks :List<Book>?
         ) : HomeViewState()
         data object Loading : HomeViewState()
         data object Error : HomeViewState()
