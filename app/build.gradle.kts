@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.coil.compose)  // Coil for Compose
     implementation(libs.retrofit)
     implementation(libs.retrofitGSON)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.fragment.ktx)
 
     kapt(libs.hilt.android.compiler)
     testImplementation(libs.junit)

@@ -578,3 +578,30 @@ data class FavouritesResponse(
     @SerializedName("favorites")
     val books: List<Book>
 ) : Serializable
+
+data class ReadBookResponse(
+    val books: List<ReadBook>
+)
+
+data class ReadBook(
+    @SerializedName("book_id")
+    val bookId: Int,
+
+    @SerializedName("book_pdf_url")
+    val bookPdfUrl: String,
+
+    @SerializedName("audio_url")
+    val audioUrl: String,
+
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("id")
+    val id: Int,
+
+    @SerializedName("page_index")
+    val pageIndex: Int,
+
+    @SerializedName("updated_at")
+    val updatedAt: String
+)

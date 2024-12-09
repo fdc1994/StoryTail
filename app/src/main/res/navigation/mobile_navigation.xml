@@ -43,5 +43,17 @@
         <argument
             android:name="book"
             app:argType="com.fabiotiago.storytail.app.ui.home.Book" />
+        <action
+            android:id="@+id/action_bookFragment_to_readBookFragment"
+            app:destination="@id/readBookFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/readBookFragment"
+        android:name="com.fabiotiago.storytail.app.ui.readbook.ReadBookFragment"
+        android:label="fragment_read_book"
+        tools:layout="@layout/fragment_read_book" >
+        <argument
+            android:name="bookId"
+            app:argType="integer" />
     </fragment>
 </navigation>

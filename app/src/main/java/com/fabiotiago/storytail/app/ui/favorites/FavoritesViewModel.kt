@@ -58,7 +58,6 @@ class FavoritesViewModel @Inject constructor(
         }
     }
 
-
     sealed class FavoritesViewState {
         data class ContentLoaded(
             val books :List<Book>
@@ -67,6 +66,4 @@ class FavoritesViewModel @Inject constructor(
         data object Empty : FavoritesViewState()
         data object Error : FavoritesViewState()
     }
-
-
 }

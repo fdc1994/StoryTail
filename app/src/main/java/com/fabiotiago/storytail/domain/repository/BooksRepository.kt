@@ -4,11 +4,13 @@ import com.fabiotiago.storytail.app.ui.home.Book
 import com.fabiotiago.storytail.data.interfaces.StoryTailService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 interface BooksRepository {
     suspend fun getBooks(): List<Book>?
     suspend fun getPopularBooks(): List<Book>?
+    suspend fun getBookPdf(bookId: Int, cacheDir: File): File?
 }
 
 class BooksRepositoryImpl @Inject constructor(
@@ -31,6 +33,22 @@ class BooksRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 null
             }
+        }
+    }
+
+    override suspend fun getBookPdf(bookId: Int, cacheDir: File): File? {
+        return try {
+            val bookUrl = storyTailService.getBookPdfUrl(bookId).books.first().bookPdfUrl
+            val responseBody = storyTailService.getBookPdf(bookUrl)
+            val file = File(cacheDir, "downloaded.pdf")
+            file.outputStream().use { outputStream ->
+                responseBody.byteStream().use { inputStream ->
+                    outputStream.write(inputStream.readBytes())
+                }
+            }
+            return file
+        } catch (e: Exception) {
+            null
         }
     }
 
