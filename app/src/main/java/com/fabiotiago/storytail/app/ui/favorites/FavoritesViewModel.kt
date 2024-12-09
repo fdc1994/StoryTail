@@ -30,7 +30,11 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             val books = favouritesRepository.getFavourites()
             if (books != null) {
-                _viewState.emit(FavoritesViewState.ContentLoaded(books))
+                if (books.isEmpty()) {
+                    _viewState.emit(FavoritesViewState.Empty)
+                } else {
+                    _viewState.emit(FavoritesViewState.ContentLoaded(books))
+                }
             } else {
                 _viewState.emit(FavoritesViewState.Error)
             }
