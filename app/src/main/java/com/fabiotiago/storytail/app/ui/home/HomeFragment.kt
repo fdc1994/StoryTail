@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.databinding.FragmentHomeBinding
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
+import com.fabiotiago.storytail.domain.repository.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,7 +31,7 @@ class HomeFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                HomeScreenComposable.HomeScreen(homeViewModel, ::navigateToBook, ::navigateToLogin)
+                HomeScreenComposable.HomeScreen(homeViewModel, ::onBookCtaClick, ::navigateToLogin)
             }
         }
     }
@@ -39,8 +41,12 @@ class HomeFragment : Fragment() {
         homeViewModel.init()
     }
 
-    private fun navigateToBook(book: Book) {
-        findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToBookFragment(book))
+    private fun onBookCtaClick(book: Book) {
+        if (book.accessLevel > UserAuthenticationManager.userAccessLevel) {
+            navigateToLogin()
+        } else {
+            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToBookFragment(book))
+        }
     }
 
     private fun navigateToLogin() {

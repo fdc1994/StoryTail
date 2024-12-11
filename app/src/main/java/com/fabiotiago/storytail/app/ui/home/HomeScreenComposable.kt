@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,6 +53,7 @@ import coil.request.ImageRequest
 import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.app.ui.favorites.FavoritesViewModel
 import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -174,29 +176,34 @@ object HomeScreenComposable {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                // Promotion Banner
-                item {
-                    PromotionBanner(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "Log in now!",
-                        subtitle = "Logged in Users can see a lot more books and get premium!",
-                        ctaText = "Go to login",
-                        iconRes = R.drawable.story_tail_logo
-                    ) {
-                        onLoginClick.invoke()
+                if (!UserAuthenticationManager.isUserLoggedIn) {
+                    item {
+                        PromotionBanner(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = "Log in now!",
+                            subtitle = "Logged in Users can see a lot more books and get premium!",
+                            ctaText = "Go to login",
+                            iconRes = R.drawable.story_tail_logo
+                        ) {
+                            onLoginClick.invoke()
+                        }
                     }
                 }
 
-
                 // Dynamically mix Spotlight and Carousels
                 itemsIndexed(sections) { _, title ->
-                    BookCarousel(
-                    books.shuffled(),
-                    title,
-                    favourites,
-                    onBookClick,
-                    onFavoriteClick
-                    )
+                    if(title == "Spotlight") {
+                        SpotlightSection(books.shuffled(), favourites, onFavoriteClick, onBookClick)
+                    } else {
+                        BookCarousel(
+                            books.shuffled(),
+                            title,
+                            favourites,
+                            onBookClick,
+                            onFavoriteClick
+                        )
+                    }
+
                 }
             }
         }
@@ -346,7 +353,7 @@ object HomeScreenComposable {
                         .weight(1f), // Adjust the weight to fit the button proportionally
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                 ) {
-                    val text = if (book.accessLevel == 3) "PREVIEW" else "READ"
+                    val text = if (book.accessLevel > UserAuthenticationManager.userAccessLevel) "GET PREMIUM" else "READ"
                     Text(text)
                 }
             }
@@ -429,7 +436,7 @@ object HomeScreenComposable {
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(16.dp)
                 .background(
                     colorResource(R.color.orange_secondary),
@@ -461,16 +468,20 @@ object HomeScreenComposable {
 
             // Spotlight Row
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .width(160.dp)
-                    .height(250.dp)
-                    .padding(16.dp),
+                modifier = Modifier.height(350.dp).padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // First Book Spotlight
                 BookCard(
                     book = books[0],
+                    isFavourite = favourites?.contains(books[0]) == true,
+                    modifier = Modifier.weight(1f),
+                    onFavoriteClick = onFavoriteClick,
+                    onBookClick
+                )
+
+                BookCard(
+                    book = books[1],
                     isFavourite = favourites?.contains(books[0]) == true,
                     modifier = Modifier.weight(1f),
                     onFavoriteClick = onFavoriteClick,

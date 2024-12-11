@@ -4,8 +4,12 @@ import com.fabiotiago.storytail.app.ui.home.BooksResponse
 import com.fabiotiago.storytail.app.ui.home.FavouritesResponse
 import com.fabiotiago.storytail.app.ui.home.ReadBookResponse
 import com.fabiotiago.storytail.domain.repository.ApiResponse
+import com.fabiotiago.storytail.domain.repository.AuthenticationRequest
+import com.fabiotiago.storytail.domain.repository.AuthenticationResponse
 import com.fabiotiago.storytail.domain.repository.FavouriteRequest
+import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepositoryImpl
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HTTP
@@ -38,4 +42,7 @@ interface StoryTailService {
 
     @GET("/livros/{fileName}")
     suspend fun getBookPdf(@Path("fileName") fileName: String): ResponseBody
+
+    @POST("/authenticate")
+    suspend fun authenticate(@Body request: AuthenticationRequest): Response<AuthenticationResponse>
 }

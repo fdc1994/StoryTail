@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserAccountFragment : Fragment() {
 
     private val userAccountViewModel: UserAccountViewModel by viewModels()
@@ -17,22 +19,13 @@ class UserAccountFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val state = userAccountViewModel.userState
-
+        super.onCreateView(inflater, container, savedInstanceState)
         return ComposeView(requireContext()).apply {
             setContent {
                 UserAccountComposeUi.UserAccountScreen(
-                    state,
-                    ::onLogin,
-                    ::onLogout
+                    userAccountViewModel
                 )
             }
         }
     }
-
-    private fun onLogin(email: String, password: String) =
-        userAccountViewModel.onLogin(email, password)
-
-    private fun onLogout() = userAccountViewModel.onLogout()
 }
