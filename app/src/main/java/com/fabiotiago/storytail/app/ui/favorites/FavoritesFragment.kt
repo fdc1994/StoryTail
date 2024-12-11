@@ -8,8 +8,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.fabiotiago.storytail.R
+import com.fabiotiago.storytail.app.ui.home.HomeFragmentDirections
 import com.fabiotiago.storytail.app.ui.home.HomeScreenComposable
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.fabiotiago.storytail.domain.repository.Book
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,10 +45,19 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun navigateToBook(book: Book) {
-        findNavController().navigate(
-            FavoritesFragmentDirections.actionNavigationFavoritesToBookFragment(
-                book
+        if (book.accessLevel > UserAuthenticationManager.userAccessLevel) {
+            navigateToLogin()
+        } else {
+            findNavController().navigate(
+                FavoritesFragmentDirections.actionNavigationFavoritesToBookFragment(
+                    book
+                )
             )
-        )
+        }
+    }
+
+    private fun navigateToLogin() {
+        val navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+        navView.selectedItemId = R.id.navigation_user_account
     }
 }
