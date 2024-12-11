@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.navigation.fragment.navArgs
-import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.app.ui.book.BookFragmentArgs
 import com.fabiotiago.storytail.app.ui.readbook.ReadBookComposeUi.PdfViewerScreen
 import dagger.hilt.android.AndroidEntryPoint
 

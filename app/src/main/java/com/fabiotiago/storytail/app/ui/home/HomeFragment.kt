@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.databinding.FragmentHomeBinding
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.fabiotiago.storytail.domain.repository.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -19,10 +18,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by viewModels()
-
-    private var _binding: FragmentHomeBinding? = null
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,10 +47,5 @@ class HomeFragment : Fragment() {
     private fun navigateToLogin() {
         val navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
         navView.selectedItemId = R.id.navigation_user_account
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

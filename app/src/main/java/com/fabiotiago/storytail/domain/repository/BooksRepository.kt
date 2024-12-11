@@ -2,9 +2,11 @@ package com.fabiotiago.storytail.domain.repository
 
 import com.fabiotiago.storytail.app.ui.home.Book
 import com.fabiotiago.storytail.data.interfaces.StoryTailService
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.Serializable
 import javax.inject.Inject
 
 interface BooksRepository {

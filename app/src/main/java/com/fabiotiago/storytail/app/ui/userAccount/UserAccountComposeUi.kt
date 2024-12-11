@@ -29,7 +29,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
-import kotlin.reflect.KFunction1
 
 
 object UserAccountComposeUi {
