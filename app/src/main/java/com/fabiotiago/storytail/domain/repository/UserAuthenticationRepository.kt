@@ -13,6 +13,11 @@ interface UserAuthenticationRepository {
         password: String,
         callback: (Boolean, String) -> Unit
     )
+
+    suspend fun upgradeUser(
+       id: Int,
+       callback: (Boolean, String) -> Unit
+    )
 }
 
 class UserAuthenticationRepositoryImpl @Inject constructor(
@@ -42,6 +47,40 @@ class UserAuthenticationRepositoryImpl @Inject constructor(
                     }
                     UserAuthenticationManager.apply {
                         isUserLoggedIn = true
+                        user = authResponse?.user
+                        userAccessLevel = authResponse?.user?.userTypeId ?: 2
+                    }
+                } else {
+                    // Authentication failed (e.g., invalid credentials)
+                    callback(false, "Authentication failed: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                // Handle any errors during the API call
+                callback(false, "Authentication error: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    override suspend fun upgradeUser(id: Int, callback: (Boolean, String) -> Unit) {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Make the authentication request
+                val response =
+                    storyTailService.upgradeUser(ChangeUserTypeRequest(id))
+
+                // Check if the response is successful
+                if (response.isSuccessful) {
+                    val authResponse = response.body()
+                    if (authResponse != null) {
+                        // Authentication was successful
+                        callback(true, "Authentication successful: ${authResponse.message}")
+                    } else {
+                        // Null response body
+                        callback(false, "Authentication failed: Empty response")
+                    }
+                    UserAuthenticationManager.apply {
+                        isUserLoggedIn = true
+                        user = authResponse?.user
                         userAccessLevel = authResponse?.user?.userTypeId ?: 2
                     }
                 } else {
@@ -101,4 +140,17 @@ data class User(
 
     @SerializedName("updated_at")
     val updatedAt: String
+)
+
+data class ChangeUserTypeRequest(
+    @SerializedName("user_id")
+    val userId: Int
+)
+
+data class ChangeUserTypeResponse(
+    @SerializedName("message")
+    val message: String,
+
+    @SerializedName("user")
+    val user: User
 )

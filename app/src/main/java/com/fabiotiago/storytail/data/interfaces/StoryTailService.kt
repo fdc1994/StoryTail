@@ -6,6 +6,8 @@ import com.fabiotiago.storytail.app.ui.home.ReadBookResponse
 import com.fabiotiago.storytail.domain.repository.ApiResponse
 import com.fabiotiago.storytail.domain.repository.AuthenticationRequest
 import com.fabiotiago.storytail.domain.repository.AuthenticationResponse
+import com.fabiotiago.storytail.domain.repository.ChangeUserTypeRequest
+import com.fabiotiago.storytail.domain.repository.ChangeUserTypeResponse
 import com.fabiotiago.storytail.domain.repository.FavouriteRequest
 import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepositoryImpl
 import okhttp3.ResponseBody
@@ -45,4 +47,7 @@ interface StoryTailService {
 
     @POST("/authenticate")
     suspend fun authenticate(@Body request: AuthenticationRequest): Response<AuthenticationResponse>
+
+    @POST("/upgrade")
+    suspend fun upgradeUser(@Body request: ChangeUserTypeRequest): Response<ChangeUserTypeResponse>
 }

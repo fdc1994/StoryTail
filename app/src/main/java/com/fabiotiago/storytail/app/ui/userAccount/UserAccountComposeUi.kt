@@ -1,19 +1,35 @@
 package com.fabiotiago.storytail.app.ui.userAccount
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
+import kotlin.reflect.KFunction1
 
 
 object UserAccountComposeUi {
@@ -30,9 +46,11 @@ object UserAccountComposeUi {
                     onLogin = viewModel::login
                 )
             }
+
             is UserAccountViewState.LoginSuccess -> {
-                PostLoginScreen(state as UserAccountViewState.LoginSuccess, viewModel::logout)
+                PostLoginScreen(state as UserAccountViewState.LoginSuccess, viewModel::logout, viewModel::becomePremium)
             }
+
             is UserAccountViewState.Loading -> {
                 LoadingView()
             }
@@ -45,7 +63,11 @@ object UserAccountComposeUi {
     }
 
     @Composable
-    fun LoginForm(hasError: Boolean = false, errorMessage: String = "Something went wrong, please try again", onLogin: (String, String) -> Unit) {
+    fun LoginForm(
+        hasError: Boolean = false,
+        errorMessage: String = "Something went wrong, please try again",
+        onLogin: (String, String) -> Unit
+    ) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
 
@@ -129,7 +151,11 @@ object UserAccountComposeUi {
     }
 
     @Composable
-    fun PostLoginScreen(state: UserAccountViewState.LoginSuccess, onLogout: () -> Unit) {
+    fun PostLoginScreen(
+        state: UserAccountViewState.LoginSuccess,
+        onLogout: () -> Unit,
+        onPremium: (Int) -> Unit
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -143,6 +169,14 @@ object UserAccountComposeUi {
 
             Button(onClick = { onLogout.invoke() }, modifier = Modifier.fillMaxWidth()) {
                 Text("Logout")
+            }
+
+            if ((UserAuthenticationManager.user?.userTypeId ?: 1) < 2) {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(onClick = { UserAuthenticationManager.user?.id?.let { onPremium.invoke(it) } }, modifier = Modifier.fillMaxWidth()) {
+                    Text("Become Premium")
+                }
             }
         }
     }

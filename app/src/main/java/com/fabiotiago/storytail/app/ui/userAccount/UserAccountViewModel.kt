@@ -7,9 +7,7 @@ import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,9 +16,9 @@ class UserAccountViewModel @Inject constructor(
     private val userAuthenticationRepository: UserAuthenticationRepository
 ) : ViewModel() {
 
-    private val _viewState : MutableSharedFlow<UserAccountViewState> = MutableSharedFlow(
-            replay = 1,
-    onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    private val _viewState: MutableSharedFlow<UserAccountViewState> = MutableSharedFlow(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val viewState: SharedFlow<UserAccountViewState> = _viewState
 
@@ -50,8 +48,28 @@ class UserAccountViewModel @Inject constructor(
             UserAuthenticationManager.apply {
                 isUserLoggedIn = false
                 userAccessLevel = 1
+                user = null
             }
             _viewState.emit(UserAccountViewState.Logout)
+        }
+    }
+
+    fun becomePremium(userId: Int) {
+        viewModelScope.launch {
+            _viewState.emit(UserAccountViewState.Loading)
+            userAuthenticationRepository.upgradeUser(userId) { success, message ->
+                launch {
+                    if (success) {
+                        _viewState.emit(
+                            UserAccountViewState.LoginSuccess(
+                                UserAuthenticationManager.user?.userName ?: ""
+                            )
+                        )
+                    } else {
+                        _viewState.emit(UserAccountViewState.LoginError(message))
+                    }
+                }
+            }
         }
     }
 }
