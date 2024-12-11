@@ -8,12 +8,21 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BookFragment : Fragment() {
 
     private val args: BookFragmentArgs by navArgs()
+
+    override fun onResume() {
+        super.onResume()
+        val book = args.book
+        if (book.accessLevel > UserAuthenticationManager.userAccessLevel) {
+            findNavController().popBackStack()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
