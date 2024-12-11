@@ -51,7 +51,7 @@ object ReadBookComposeUi {
             pageCount = { pages.size }
         )
 
-        Box(modifier = Modifier.fi()) {
+        Box(modifier = Modifier.fillMaxSize()) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.align(Alignment.TopCenter),
