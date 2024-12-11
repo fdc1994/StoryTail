@@ -12,8 +12,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import android.graphics.pdf.PdfRenderer
-import com.fabiotiago.storytail.app.ui.favorites.FavoritesViewModel.FavoritesViewState
-import com.fabiotiago.storytail.app.ui.home.Book
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

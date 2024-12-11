@@ -8,8 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.fabiotiago.storytail.app.ui.home.Book
 import com.fabiotiago.storytail.app.ui.home.HomeScreenComposable
+import com.fabiotiago.storytail.domain.repository.Book
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

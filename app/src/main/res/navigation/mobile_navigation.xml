@@ -38,7 +38,7 @@
         android:label="BookFragment" >
         <argument
             android:name="book"
-            app:argType="com.fabiotiago.storytail.app.ui.home.Book" />
+            app:argType="com.fabiotiago.storytail.domain.repository.Book" />
         <action
             android:id="@+id/action_bookFragment_to_readBookFragment"
             app:destination="@id/readBookFragment" />

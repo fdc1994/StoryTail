@@ -1,6 +1,5 @@
 package com.fabiotiago.storytail.domain.repository
 
-import com.fabiotiago.storytail.app.ui.home.Book
 import com.fabiotiago.storytail.data.interfaces.StoryTailService
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
@@ -53,5 +52,73 @@ class BooksRepositoryImpl @Inject constructor(
             null
         }
     }
-
 }
+
+data class Book(
+    @SerializedName("book_id")
+    val id: Int,
+
+    @SerializedName("title")
+    val title: String,
+
+    @SerializedName("description")
+    val description: String,
+
+    @SerializedName("cover_name")
+    val coverName: String?,
+
+    @SerializedName("read_time")
+    val readTime: Int,
+
+    @SerializedName("age_group")
+    val ageGroup: Int,
+
+    @SerializedName("access_level")
+    val accessLevel: Int,
+
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("authors")
+    val author: String? = "Unknown"
+) : Serializable
+
+data class BooksResponse(
+    @SerializedName("books")
+    val books: List<Book>
+) : Serializable
+
+data class FavouritesResponse(
+    @SerializedName("favorites")
+    val books: List<Book>
+) : Serializable
+
+data class ReadBookResponse(
+    val books: List<ReadBook>
+)
+
+data class ReadBook(
+    @SerializedName("book_id")
+    val bookId: Int,
+
+    @SerializedName("book_pdf_url")
+    val bookPdfUrl: String,
+
+    @SerializedName("audio_url")
+    val audioUrl: String,
+
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("id")
+    val id: Int,
+
+    @SerializedName("page_index")
+    val pageIndex: Int,
+
+    @SerializedName("updated_at")
+    val updatedAt: String
+)

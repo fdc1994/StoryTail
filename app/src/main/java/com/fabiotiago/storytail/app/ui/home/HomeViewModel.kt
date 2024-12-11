@@ -2,6 +2,7 @@ package com.fabiotiago.storytail.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fabiotiago.storytail.domain.repository.Book
 import com.fabiotiago.storytail.domain.repository.BooksRepository
 import com.fabiotiago.storytail.domain.repository.FavouritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

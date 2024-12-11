@@ -1,14 +1,14 @@
 package com.fabiotiago.storytail.data.interfaces
 
-import com.fabiotiago.storytail.app.ui.home.BooksResponse
-import com.fabiotiago.storytail.app.ui.home.FavouritesResponse
-import com.fabiotiago.storytail.app.ui.home.ReadBookResponse
 import com.fabiotiago.storytail.domain.repository.ApiResponse
 import com.fabiotiago.storytail.domain.repository.AuthenticationRequest
 import com.fabiotiago.storytail.domain.repository.AuthenticationResponse
+import com.fabiotiago.storytail.domain.repository.BooksResponse
 import com.fabiotiago.storytail.domain.repository.ChangeUserTypeRequest
 import com.fabiotiago.storytail.domain.repository.ChangeUserTypeResponse
 import com.fabiotiago.storytail.domain.repository.FavouriteRequest
+import com.fabiotiago.storytail.domain.repository.FavouritesResponse
+import com.fabiotiago.storytail.domain.repository.ReadBookResponse
 import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepositoryImpl
 import okhttp3.ResponseBody
 import retrofit2.Response

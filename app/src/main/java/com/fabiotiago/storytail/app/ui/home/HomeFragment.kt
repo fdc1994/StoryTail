@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
+import com.fabiotiago.storytail.domain.repository.Book
 import com.fabiotiago.storytail.domain.repository.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
