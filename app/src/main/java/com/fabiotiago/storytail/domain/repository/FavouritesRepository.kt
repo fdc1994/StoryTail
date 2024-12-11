@@ -1,6 +1,7 @@
 package com.fabiotiago.storytail.domain.repository
 
 import com.fabiotiago.storytail.data.interfaces.StoryTailService
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +19,7 @@ class FavouritesRepositoryImpl @Inject constructor(
     override suspend fun getFavourites(): List<Book>? {
         return withContext(Dispatchers.IO) {
             try {
-                storyTailService.getFavourites(1).books
+                storyTailService.getFavourites(UserAuthenticationManager.user?.id ?: 1).books
             } catch (e: Exception) {
                 null
             }

@@ -2,6 +2,7 @@ package com.fabiotiago.storytail.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.fabiotiago.storytail.domain.repository.Book
 import com.fabiotiago.storytail.domain.repository.BooksRepository
 import com.fabiotiago.storytail.domain.repository.FavouritesRepository
@@ -17,54 +18,86 @@ class HomeViewModel @Inject constructor(
     private val booksRepository: BooksRepository,
     private val favouritesRepository: FavouritesRepository
 ) : ViewModel() {
+
     private val _viewState: MutableSharedFlow<HomeViewState> = MutableSharedFlow(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val viewState = _viewState.asSharedFlow()
 
+    private var cachedBooks: List<Book> = emptyList()
+    private var ageGroup: AgeGroup = AgeGroup.ALL
+
     fun init() {
-        getBooks()
+        fetchBooks()
     }
 
-    private fun getBooks() {
+    private fun fetchBooks() {
         viewModelScope.launch {
             val books = booksRepository.getBooks()
             val popularBooks = booksRepository.getPopularBooks()
             val favourites = favouritesRepository.getFavourites()
+
             if (books != null) {
-                _viewState.emit(HomeViewState.ContentLoaded(books, popularBooks, favourites))
+                cachedBooks = books // Cache the books
+                emitFilteredBooks()
             } else {
                 _viewState.emit(HomeViewState.Error)
             }
         }
     }
 
-    fun addOrRemoveFavourite(isFavourite: Boolean, bookId: Int) {
-        viewModelScope.launch{
-            if(isFavourite) {
-                favouritesRepository.removeFavourite(
-                    userId = 1,
-                    bookId = bookId
+    private fun emitFilteredBooks() {
+        val filteredBooks = cachedBooks.filterByAgeGroup()
+        viewModelScope.launch {
+            _viewState.emit(
+                HomeViewState.ContentLoaded(
+                    filteredBooks,
+                    null, // Update if you need filtered popularBooks
+                    favouritesRepository.getFavourites() // Update favourites if needed
                 )
-            } else {
-                favouritesRepository.addFavourite(
-                    userId = 1,
-                    bookId = bookId
-                )
-            }
-            getBooks()
+            )
         }
     }
 
+    fun filterByAgeGroup(ageGroup: AgeGroup) {
+        this.ageGroup = ageGroup
+        emitFilteredBooks() // Filter locally
+    }
+
+    fun addOrRemoveFavourite(isFavourite: Boolean, bookId: Int) {
+        viewModelScope.launch {
+            if (isFavourite) {
+                favouritesRepository.removeFavourite(userId = UserAuthenticationManager.user?.id ?: 1, bookId = bookId)
+            } else {
+                favouritesRepository.addFavourite(userId = UserAuthenticationManager.user?.id ?: 1, bookId = bookId)
+            }
+            emitFilteredBooks() // Update favourites without re-fetching books
+        }
+    }
+
+    private fun List<Book>.filterByAgeGroup(): List<Book> {
+        return if (ageGroup == AgeGroup.ALL) {
+            this
+        } else {
+            this.filter { it.ageGroup == ageGroup.ordinal }
+        }
+    }
 
     sealed class HomeViewState {
         data class ContentLoaded(
-            val books :List<Book>,
-            val popularBooks :List<Book>?,
+            val books: List<Book>,
+            val popularBooks: List<Book>?,
             val favourites: List<Book>?
         ) : HomeViewState()
         data object Loading : HomeViewState()
         data object Error : HomeViewState()
     }
+}
+
+enum class AgeGroup(val displayName: String) {
+    ALL("All Ages"),
+    KIDS("Kids"),
+    TEENS("Teens"),
+    ADULTS("Adults")
 }

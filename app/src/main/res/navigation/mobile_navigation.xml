@@ -46,7 +46,7 @@
     <fragment
         android:id="@+id/readBookFragment"
         android:name="com.fabiotiago.storytail.app.ui.readbook.ReadBookFragment"
-        android:label="fragment_read_book">
+        android:label="@string/title_read_book">
         <argument
             android:name="bookId"
             app:argType="integer" />

@@ -28,6 +28,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +38,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,11 +57,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.fabiotiago.storytail.R
 import com.fabiotiago.storytail.app.ui.favorites.FavoritesViewModel
-import com.fabiotiago.storytail.app.ui.home.HomeViewModel.HomeViewState.Loading
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.fabiotiago.storytail.domain.repository.Book
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 object HomeScreenComposable {
 
@@ -65,25 +68,25 @@ object HomeScreenComposable {
         onBookClick: (book: Book) -> Unit,
         onLoginClick: () -> Unit
     ) {
-        val viewState by viewModel.viewState.collectAsState(initial = Loading)
+        val viewState by viewModel.viewState.collectAsState(initial = HomeViewModel.HomeViewState.Loading)
         when (viewState) {
             is HomeViewModel.HomeViewState.ContentLoaded -> {
-                val content = (viewState as HomeViewModel.HomeViewState.ContentLoaded)
+                val content = viewState as HomeViewModel.HomeViewState.ContentLoaded
                 MainContent(
                     content.books,
                     content.popularBooks,
                     content.favourites,
                     onLoginClick,
                     onBookClick,
-                    viewModel::addOrRemoveFavourite
+                    viewModel::addOrRemoveFavourite,
+                    viewModel::filterByAgeGroup
                 )
             }
-
             HomeViewModel.HomeViewState.Error -> ErrorView()
-            Loading -> LoadingView()
+            HomeViewModel.HomeViewState.Loading -> LoadingView()
         }
-
     }
+
 
     @Composable
     fun FavoritesScreen(
@@ -156,58 +159,88 @@ object HomeScreenComposable {
         favourites: List<Book>?,
         onLoginClick: () -> Unit,
         onBookClick: (book: Book) -> Unit,
-        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit,
+        onAgeGroupSelected: (AgeGroup) -> Unit
     ) {
         val sections = listOf(
             "Books",
             "Suggestions",
             "Spotlight",
             "More Suggestions"
-        ) // Add a placeholder for Spotlight
+        )
+
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        var selectedAgeGroup by rememberSaveable { mutableStateOf<AgeGroup?>(null) }
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                if (!UserAuthenticationManager.isUserLoggedIn) {
-                    item {
-                        PromotionBanner(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Log in now!",
-                            subtitle = "Logged in Users can see a lot more books and get premium!",
-                            ctaText = "Go to login",
-                            iconRes = R.drawable.story_tail_logo
-                        ) {
-                            onLoginClick.invoke()
+            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                // Dropdown Menu for Age Group Selection
+                // Dropdown Menu for Age Group Selection
+                Box {
+                    Button(onClick = { expanded = true }) {
+                        Text(text = selectedAgeGroup?.displayName ?: "Select Age Group")
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        AgeGroup.entries.forEach { ageGroup ->
+                            DropdownMenuItem(
+                                text = { Text(ageGroup.displayName) },
+                                onClick = {
+                                    selectedAgeGroup = ageGroup
+                                    expanded = false
+                                    onAgeGroupSelected(ageGroup) // Notify selection
+                                }
+                            )
                         }
                     }
                 }
 
-                // Dynamically mix Spotlight and Carousels
-                itemsIndexed(sections) { _, title ->
-                    if(title == "Spotlight") {
-                        SpotlightSection(books.shuffled(), favourites, onFavoriteClick, onBookClick)
-                    } else {
-                        BookCarousel(
-                            books.shuffled(),
-                            title,
-                            favourites,
-                            onBookClick,
-                            onFavoriteClick
-                        )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp)
+                ) {
+                    if (!UserAuthenticationManager.isUserLoggedIn) {
+                        item {
+                            PromotionBanner(
+                                modifier = Modifier.fillMaxWidth(),
+                                title = "Log in now!",
+                                subtitle = "Logged in Users can see a lot more books and get premium!",
+                                ctaText = "Go to login",
+                                iconRes = R.drawable.story_tail_logo
+                            ) {
+                                onLoginClick.invoke()
+                            }
+                        }
                     }
 
+                    itemsIndexed(sections) { _, title ->
+                        if (title == "Spotlight") {
+                            SpotlightSection(books, favourites, onFavoriteClick, onBookClick)
+                        } else {
+                            BookCarousel(
+                                books,
+                                title,
+                                favourites,
+                                onBookClick,
+                                onFavoriteClick
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+
 
     @Composable
     fun LoadingView(
@@ -541,6 +574,6 @@ object HomeScreenComposable {
         onBookClick: (book: Book) -> Unit,
         onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
     ) {
-        MainContent(books, popularBooks, favourites, onLoginClick, onBookClick, onFavoriteClick)
+        MainContent(books, popularBooks, favourites, onLoginClick, onBookClick, onFavoriteClick) {}
     }
 }
