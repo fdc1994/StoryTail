@@ -1,5 +1,7 @@
 package com.fabiotiago.storytail.domain.di
 
+import com.fabiotiago.storytail.domain.repository.AuthorRepository
+import com.fabiotiago.storytail.domain.repository.AuthorRepositoryImpl
 import com.fabiotiago.storytail.domain.repository.BooksRepository
 import com.fabiotiago.storytail.domain.repository.BooksRepositoryImpl
 import com.fabiotiago.storytail.domain.repository.ContactRepository
@@ -28,4 +30,7 @@ interface DomainModule {
 
     @Binds
     fun bindContactRepository(contactRepositoryImpl: ContactRepositoryImpl): ContactRepository
+
+    @Binds
+    fun bindAuthorRepository(authorRepositoryImpl: AuthorRepositoryImpl): AuthorRepository
 }

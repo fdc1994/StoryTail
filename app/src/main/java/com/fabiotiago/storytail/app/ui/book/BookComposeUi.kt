@@ -1,6 +1,7 @@
 package com.fabiotiago.storytail.app.ui.book
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,7 +33,7 @@ import com.fabiotiago.storytail.domain.repository.Book
 object BookComposeUi {
 
     @Composable
-    fun BookProductPage(book: Book, onActionClick: (String) -> Unit) {
+    fun BookProductPage(book: Book, onActionClick: () -> Unit, onAuthorClick: (Int) -> Unit) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -45,7 +45,7 @@ object BookComposeUi {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                item{
+                item {
                     // Book Cover
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -71,16 +71,20 @@ object BookComposeUi {
                         text = book.title,
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        textAlign = TextAlign.Center,
+
+                        )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = "By ${book.author}",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp).clickable {
+                            onAuthorClick.invoke(book.id)
+                        },
                         textAlign = TextAlign.Center
                     )
                 }
@@ -116,13 +120,13 @@ object BookComposeUi {
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Button(
-                            onClick = { onActionClick(if (book.accessLevel >2) "PREVIEW" else "READ") },
+                            onClick = { onActionClick() },
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
                                 .height(48.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                         ) {
-                            Text(text ="READ0")
+                            Text(text = "READ0")
                         }
                     }
                 }

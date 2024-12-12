@@ -3,6 +3,7 @@ package com.fabiotiago.storytail.data.interfaces
 import com.fabiotiago.storytail.domain.repository.ApiResponse
 import com.fabiotiago.storytail.domain.repository.AuthenticationRequest
 import com.fabiotiago.storytail.domain.repository.AuthenticationResponse
+import com.fabiotiago.storytail.domain.repository.Author
 import com.fabiotiago.storytail.domain.repository.BooksResponse
 import com.fabiotiago.storytail.domain.repository.ChangeUserTypeRequest
 import com.fabiotiago.storytail.domain.repository.ChangeUserTypeResponse
@@ -54,4 +55,7 @@ interface StoryTailService {
 
     @POST("/contact")
     suspend fun sendContactRequest(@Body request: ContactRequest): Response<ChangeUserTypeResponse>
+
+    @GET("/author/{authorId}")
+    suspend fun getAuthor(@Path("authorId") authorId: Int): Author
 }

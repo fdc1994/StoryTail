@@ -32,8 +32,10 @@ class BookFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 BookComposeUi.BookProductPage(
-                    book
-                ) { openBookReader() }
+                    book,
+                    ::openBookReader,
+                    ::openAuthorPage
+                )
             }
         }
     }
@@ -42,6 +44,14 @@ class BookFragment : Fragment() {
         findNavController().navigate(
             BookFragmentDirections.actionBookFragmentToReadBookFragment(
                 args.book.id
+            )
+        )
+    }
+
+    private fun openAuthorPage(authorId: Int) {
+        findNavController().navigate(
+            BookFragmentDirections.actionBookFragmentToAuthorFragment(
+                authorId
             )
         )
     }
