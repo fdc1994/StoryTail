@@ -21,7 +21,7 @@ object NetworkGlobalModule {
     @Singleton
     fun provideStoryTailService(): StoryTailService {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.0.101:5002")
+            .baseUrl("http://192.168.74.120:5002")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(StoryTailService::class.java)

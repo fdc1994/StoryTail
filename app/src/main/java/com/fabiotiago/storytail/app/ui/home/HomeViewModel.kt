@@ -27,6 +27,7 @@ class HomeViewModel @Inject constructor(
 
     private var cachedBooks: List<Book> = emptyList()
     private var ageGroup: AgeGroup = AgeGroup.ALL
+    private var searchTerm: String = ""
 
     fun init() {
         fetchBooks()
@@ -48,7 +49,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun emitFilteredBooks() {
-        val filteredBooks = cachedBooks.filterByAgeGroup()
+        val filteredBooks = cachedBooks.filter()
         viewModelScope.launch {
             _viewState.emit(
                 HomeViewState.ContentLoaded(
@@ -60,9 +61,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun filterByAgeGroup(ageGroup: AgeGroup) {
+    fun filter(ageGroup: AgeGroup, search: String) {
         this.ageGroup = ageGroup
-        emitFilteredBooks() // Filter locally
+        this.searchTerm = search
+        emitFilteredBooks()
     }
 
     fun addOrRemoveFavourite(isFavourite: Boolean, bookId: Int) {
@@ -76,11 +78,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun List<Book>.filterByAgeGroup(): List<Book> {
-        return if (ageGroup == AgeGroup.ALL) {
-            this
-        } else {
-            this.filter { it.ageGroup == ageGroup.ordinal }
+    private fun List<Book>.filter(): List<Book> {
+        return this.filter { book ->
+            val matchesAgeGroup = ageGroup == AgeGroup.ALL || book.ageGroup == ageGroup.ordinal
+            val matchesSearchTerm = searchTerm.isEmpty() || book.title.contains(searchTerm, ignoreCase = true)
+            matchesAgeGroup && matchesSearchTerm
         }
     }
 

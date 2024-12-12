@@ -35,11 +35,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -79,9 +79,10 @@ object HomeScreenComposable {
                     onLoginClick,
                     onBookClick,
                     viewModel::addOrRemoveFavourite,
-                    viewModel::filterByAgeGroup
+                    viewModel::filter
                 )
             }
+
             HomeViewModel.HomeViewState.Error -> ErrorView()
             HomeViewModel.HomeViewState.Loading -> LoadingView()
         }
@@ -160,7 +161,7 @@ object HomeScreenComposable {
         onLoginClick: () -> Unit,
         onBookClick: (book: Book) -> Unit,
         onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit,
-        onAgeGroupSelected: (AgeGroup) -> Unit
+        onFilter: (AgeGroup, String) -> Unit
     ) {
         val sections = listOf(
             "Books",
@@ -170,34 +171,60 @@ object HomeScreenComposable {
         )
 
         var expanded by rememberSaveable { mutableStateOf(false) }
-        var selectedAgeGroup by rememberSaveable { mutableStateOf<AgeGroup?>(null) }
+        var selectedAgeGroup by rememberSaveable { mutableStateOf<AgeGroup>(AgeGroup.ALL) }
+        var searchText by rememberSaveable { mutableStateOf("") }
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                // Dropdown Menu for Age Group Selection
-                // Dropdown Menu for Age Group Selection
-                Box {
-                    Button(onClick = { expanded = true }) {
-                        Text(text = selectedAgeGroup?.displayName ?: "Select Age Group")
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        AgeGroup.entries.forEach { ageGroup ->
-                            DropdownMenuItem(
-                                text = { Text(ageGroup.displayName) },
-                                onClick = {
-                                    selectedAgeGroup = ageGroup
-                                    expanded = false
-                                    onAgeGroupSelected(ageGroup) // Notify selection
-                                }
-                            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                // Row for Search Bar and Dropdown
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Dropdown Menu for Age Group Selection
+                    Box {
+                        Button(onClick = { expanded = true }) {
+                            Text(text = selectedAgeGroup?.displayName ?: "Select Age Group")
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            AgeGroup.entries.forEach { ageGroup ->
+                                DropdownMenuItem(
+                                    text = { Text(ageGroup.displayName) },
+                                    onClick = {
+                                        selectedAgeGroup = ageGroup
+                                        expanded = false
+                                        onFilter(ageGroup, searchText) // Notify selection
+                                    }
+                                )
+                            }
                         }
                     }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    // Search Bar
+                    TextField(
+                        value = searchText,
+                        onValueChange = {
+                            searchText = it
+                            onFilter(selectedAgeGroup, it)
+                        },
+                        placeholder = { Text("Search by title...") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp),
+                        singleLine = true
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -225,7 +252,12 @@ object HomeScreenComposable {
 
                     itemsIndexed(sections) { _, title ->
                         if (title == "Spotlight") {
-                            SpotlightSection(books, favourites, onFavoriteClick, onBookClick)
+                            SpotlightSection(
+                                books,
+                                favourites,
+                                onFavoriteClick,
+                                onBookClick
+                            )
                         } else {
                             BookCarousel(
                                 books,
@@ -304,7 +336,7 @@ object HomeScreenComposable {
                         val book = books[index]
                         BookCard(
                             book = book,
-                            isFavourite = favourites?.any { it.id == book.id } ?: false ,
+                            isFavourite = favourites?.any { it.id == book.id } ?: false,
                             onCtaClick = onBookClick,
                             onFavoriteClick = onFavoriteClick
                         )
@@ -386,7 +418,8 @@ object HomeScreenComposable {
                         .weight(1f), // Adjust the weight to fit the button proportionally
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                 ) {
-                    val text = if (book.accessLevel > UserAuthenticationManager.userAccessLevel) "GET PREMIUM" else "READ"
+                    val text =
+                        if (book.accessLevel > UserAuthenticationManager.userAccessLevel) "GET PREMIUM" else "READ"
                     Text(text)
                 }
             }
@@ -501,7 +534,9 @@ object HomeScreenComposable {
 
             // Spotlight Row
             Row(
-                modifier = Modifier.height(350.dp).padding(16.dp),
+                modifier = Modifier
+                    .height(350.dp)
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // First Book Spotlight
@@ -530,7 +565,7 @@ object HomeScreenComposable {
         onBookClick: (book: Book) -> Unit,
         onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
     ) {
-        LazyVerticalStaggeredGrid (
+        LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalItemSpacing = 20.dp,
@@ -572,8 +607,17 @@ object HomeScreenComposable {
         favourites: List<Book>?,
         onLoginClick: () -> Unit,
         onBookClick: (book: Book) -> Unit,
-        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit
+        onFavoriteClick: (isFavourite: Boolean, bookId: Int) -> Unit,
+        onAgeGroupSelected: (AgeGroup, String) -> Unit
     ) {
-        MainContent(books, popularBooks, favourites, onLoginClick, onBookClick, onFavoriteClick) {}
+        MainContent(
+            books,
+            popularBooks,
+            favourites,
+            onLoginClick,
+            onBookClick,
+            onFavoriteClick,
+            onAgeGroupSelected
+        )
     }
 }
