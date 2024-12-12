@@ -6,6 +6,7 @@ import com.fabiotiago.storytail.domain.repository.AuthenticationResponse
 import com.fabiotiago.storytail.domain.repository.BooksResponse
 import com.fabiotiago.storytail.domain.repository.ChangeUserTypeRequest
 import com.fabiotiago.storytail.domain.repository.ChangeUserTypeResponse
+import com.fabiotiago.storytail.domain.repository.ContactRequest
 import com.fabiotiago.storytail.domain.repository.FavouriteRequest
 import com.fabiotiago.storytail.domain.repository.FavouritesResponse
 import com.fabiotiago.storytail.domain.repository.ReadBookResponse
@@ -50,4 +51,7 @@ interface StoryTailService {
 
     @POST("/upgrade")
     suspend fun upgradeUser(@Body request: ChangeUserTypeRequest): Response<ChangeUserTypeResponse>
+
+    @POST("/contact")
+    suspend fun sendContactRequest(@Body request: ContactRequest): Response<ChangeUserTypeResponse>
 }

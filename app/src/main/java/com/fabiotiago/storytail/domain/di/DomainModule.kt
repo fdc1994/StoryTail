@@ -2,6 +2,8 @@ package com.fabiotiago.storytail.domain.di
 
 import com.fabiotiago.storytail.domain.repository.BooksRepository
 import com.fabiotiago.storytail.domain.repository.BooksRepositoryImpl
+import com.fabiotiago.storytail.domain.repository.ContactRepository
+import com.fabiotiago.storytail.domain.repository.ContactRepositoryImpl
 import com.fabiotiago.storytail.domain.repository.FavouritesRepository
 import com.fabiotiago.storytail.domain.repository.FavouritesRepositoryImpl
 import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepository
@@ -23,4 +25,7 @@ interface DomainModule {
 
     @Binds
     fun bindUserAuthenticationRepository(userAuthenticationRepository: UserAuthenticationRepositoryImpl): UserAuthenticationRepository
+
+    @Binds
+    fun bindContactRepository(contactRepositoryImpl: ContactRepositoryImpl): ContactRepository
 }
