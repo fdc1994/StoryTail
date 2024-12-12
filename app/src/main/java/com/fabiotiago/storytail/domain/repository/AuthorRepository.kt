@@ -26,7 +26,7 @@ data class Author(
     val id: Int,
     @SerializedName("first_name")
     val firstName: String,
-    @SerializedName("lastName")
+    @SerializedName("last_name")
     val lastName: String,
     val description: String?,
     val nationality: String?

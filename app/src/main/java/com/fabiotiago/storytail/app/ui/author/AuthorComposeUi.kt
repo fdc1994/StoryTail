@@ -47,7 +47,7 @@ object AuthorComposeUi {
                 .padding(16.dp)
         ) {
             Text(
-                text = "${author.firstName} ${author.lastName}",
+                text = "Author: ${author.firstName} ${author.lastName}",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 8.dp)
             )

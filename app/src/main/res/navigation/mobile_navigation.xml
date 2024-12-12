@@ -57,7 +57,7 @@
     <fragment
         android:id="@+id/authorFragment"
         android:name="com.fabiotiago.storytail.app.ui.author.AuthorFragment"
-        android:label="AuthorFragment" >
+        android:label="@string/title_author" >
         <argument
             android:name="authorId"
             app:argType="integer" />

@@ -126,7 +126,7 @@ object BookComposeUi {
                                 .height(48.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500))
                         ) {
-                            Text(text = "READ0")
+                            Text(text = "READ")
                         }
                     }
                 }
