@@ -252,12 +252,14 @@ object HomeScreenComposable {
 
                     itemsIndexed(sections) { _, title ->
                         if (title == "Spotlight") {
-                            SpotlightSection(
-                                books,
-                                favourites,
-                                onFavoriteClick,
-                                onBookClick
-                            )
+                            if (popularBooks != null) {
+                                SpotlightSection(
+                                    popularBooks.shuffled(),
+                                    favourites,
+                                    onFavoriteClick,
+                                    onBookClick
+                                )
+                            }
                         } else {
                             BookCarousel(
                                 books,

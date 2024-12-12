@@ -1,5 +1,6 @@
 package com.fabiotiago.storytail.app.ui.userAccount
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -69,7 +71,7 @@ object UserAccountComposeUi {
     ) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
-
+        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,7 +146,19 @@ object UserAccountComposeUi {
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Login")
+                Text("Login or Create Account")
+            }
+            Button(
+                onClick = {
+                    if (email.isNotEmpty()) {
+                        Toast.makeText(context, "A reset email has been sent to your email", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Please enter your email to reset password", Toast.LENGTH_LONG).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Recover Password")
             }
         }
     }

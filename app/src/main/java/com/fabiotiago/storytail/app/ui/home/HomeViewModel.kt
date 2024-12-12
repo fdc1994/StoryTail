@@ -36,8 +36,6 @@ class HomeViewModel @Inject constructor(
     private fun fetchBooks() {
         viewModelScope.launch {
             val books = booksRepository.getBooks()
-            val popularBooks = booksRepository.getPopularBooks()
-            val favourites = favouritesRepository.getFavourites()
 
             if (books != null) {
                 cachedBooks = books // Cache the books
@@ -54,7 +52,7 @@ class HomeViewModel @Inject constructor(
             _viewState.emit(
                 HomeViewState.ContentLoaded(
                     filteredBooks,
-                    null, // Update if you need filtered popularBooks
+                    booksRepository.getPopularBooks(), // Update if you need filtered popularBooks
                     favouritesRepository.getFavourites() // Update favourites if needed
                 )
             )
