@@ -61,5 +61,8 @@
         <argument
             android:name="authorId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_authorFragment_to_readBookFragment"
+            app:destination="@id/readBookFragment" />
     </fragment>
 </navigation>

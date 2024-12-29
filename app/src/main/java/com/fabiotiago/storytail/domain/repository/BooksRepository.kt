@@ -11,6 +11,7 @@ import javax.inject.Inject
 interface BooksRepository {
     suspend fun getBooks(): List<Book>?
     suspend fun getPopularBooks(): List<Book>?
+    suspend fun getAuthorBooks(authorId: Int): List<Book>?
     suspend fun getBookPdf(bookId: Int, cacheDir: File): File?
 }
 
@@ -31,6 +32,16 @@ class BooksRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 storyTailService.popularBooks().books
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    override suspend fun getAuthorBooks(authorId: Int): List<Book>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                storyTailService.authorBooks(authorId).books
             } catch (e: Exception) {
                 null
             }

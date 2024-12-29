@@ -11,7 +11,6 @@ import com.fabiotiago.storytail.domain.repository.ContactRequest
 import com.fabiotiago.storytail.domain.repository.FavouriteRequest
 import com.fabiotiago.storytail.domain.repository.FavouritesResponse
 import com.fabiotiago.storytail.domain.repository.ReadBookResponse
-import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepositoryImpl
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -29,6 +28,9 @@ interface StoryTailService {
 
     @GET("/popular-books")
     suspend fun popularBooks(): BooksResponse
+
+    @GET("/author-books")
+    suspend fun authorBooks(@Query("authorId") authorId: Int): BooksResponse
 
     @GET("/favourites/{userId}")
     suspend fun getFavourites(@Path("userId") userId: Int): FavouritesResponse

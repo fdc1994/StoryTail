@@ -225,7 +225,7 @@ object GenericComponentsComposables {
 
                 // CTA Button
                 Button(
-                    onClick = { onCtaClick(book) },
+                    onClick = { onCtaClick.invoke(book) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 4.dp)

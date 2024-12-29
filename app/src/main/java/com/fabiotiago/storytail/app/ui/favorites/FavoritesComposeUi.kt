@@ -17,7 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.BookCard
 import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.ErrorView
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.LoadingView
 import com.fabiotiago.storytail.domain.repository.Book
 
 object FavoritesComposeUi {

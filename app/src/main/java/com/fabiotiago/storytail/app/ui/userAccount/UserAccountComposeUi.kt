@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.LoadingView
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 
 
@@ -189,33 +190,6 @@ object UserAccountComposeUi {
 
                 Button(onClick = { UserAuthenticationManager.user?.id?.let { onPremium.invoke(it) } }, modifier = Modifier.fillMaxWidth()) {
                     Text("Become Premium")
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun LoadingView(
-        modifier: Modifier = Modifier,
-        loadingText: String? = null,
-        textStyle: TextStyle = MaterialTheme.typography.bodySmall,
-        textColor: Color = MaterialTheme.colorScheme.onBackground,
-        indicatorColor: Color = MaterialTheme.colorScheme.primary,
-    ) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator(color = indicatorColor)
-                loadingText?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = it, style = textStyle, color = textColor)
                 }
             }
         }
