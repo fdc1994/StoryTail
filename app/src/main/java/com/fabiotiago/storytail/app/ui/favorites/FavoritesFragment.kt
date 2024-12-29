@@ -9,8 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.fabiotiago.storytail.R
-import com.fabiotiago.storytail.app.ui.home.HomeFragmentDirections
-import com.fabiotiago.storytail.app.ui.home.HomeScreenComposable
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.fabiotiago.storytail.domain.repository.Book
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -29,7 +27,7 @@ class FavoritesFragment : Fragment() {
 
         return ComposeView(requireContext()).apply {
             setContent {
-                HomeScreenComposable.FavoritesScreen(favoritesViewModel, ::navigateToBook)
+                FavoritesComposeUi.FavoritesScreen(favoritesViewModel, ::navigateToBook)
             }
         }
     }

@@ -5,15 +5,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.unit.dp
-import com.fabiotiago.storytail.app.ui.home.HomeScreenComposable.ErrorView
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.ErrorView
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.LoadingView
 
 
 object ReadBookComposeUi {
@@ -27,18 +26,6 @@ object ReadBookComposeUi {
             }
             ReadBookViewModel.ReadBookViewState.Error -> ErrorView()
             ReadBookViewModel.ReadBookViewState.Loading -> LoadingView()
-        }
-    }
-
-    @Composable
-    fun LoadingView() {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
         }
     }
 

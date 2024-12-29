@@ -1,6 +1,5 @@
 package com.fabiotiago.storytail.app.ui.author
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.ErrorView
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.LoadingView
 import com.fabiotiago.storytail.domain.repository.Author
 
 
@@ -63,20 +64,4 @@ object AuthorComposeUi {
             )
         }
     }
-
-    @Composable
-    fun LoadingView() {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    }
-
-    @Composable
-    fun ErrorView() {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Error loading author details", color = Color.Red)
-        }
-    }
-
-
 }
