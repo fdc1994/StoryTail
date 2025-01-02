@@ -13,7 +13,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import android.graphics.pdf.PdfRenderer
 import com.fabiotiago.storytail.domain.repository.UserRepository
-import com.fabiotiago.storytail.domain.repository.UserRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

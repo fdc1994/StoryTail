@@ -38,7 +38,6 @@ class AuthorViewModel @Inject constructor(
                 cachedAuthor = it
                 emitFilteredBooks()
             } ?: _viewState.emit(AuthorViewState.Error)
-
         }
     }
 
