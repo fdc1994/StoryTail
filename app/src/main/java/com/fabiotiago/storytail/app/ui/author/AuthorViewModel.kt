@@ -46,9 +46,9 @@ class AuthorViewModel @Inject constructor(
     fun addOrRemoveFavourite(isFavourite: Boolean, bookId: Int) {
         viewModelScope.launch {
             if (isFavourite) {
-                favouritesRepository.removeFavourite(userId = UserAuthenticationManager.user?.id ?: 1, bookId = bookId)
+                favouritesRepository.removeFavourite(userId = UserAuthenticationManager.user?.id ?: 0, bookId = bookId)
             } else {
-                favouritesRepository.addFavourite(userId = UserAuthenticationManager.user?.id ?: 1, bookId = bookId)
+                favouritesRepository.addFavourite(userId = UserAuthenticationManager.user?.id ?: 0, bookId = bookId)
             }
             emitFilteredBooks()
         }

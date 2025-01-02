@@ -99,12 +99,12 @@ class UserAccountViewModel @Inject constructor(
         viewModelScope.launch{
             if(isFavourite) {
                 favouritesRepository.removeFavourite(
-                    userId = 1,
+                    userId = UserAuthenticationManager.user?.id ?: 0,
                     bookId = bookId
                 )
             } else {
                 favouritesRepository.addFavourite(
-                    userId = 1,
+                    userId = UserAuthenticationManager.user?.id ?: 0,
                     bookId = bookId
                 )
             }

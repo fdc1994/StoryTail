@@ -2,6 +2,7 @@ package com.fabiotiago.storytail.app.ui.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.fabiotiago.storytail.domain.repository.Book
 import com.fabiotiago.storytail.domain.repository.FavouritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,12 +46,12 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch{
             if(isFavourite) {
                 favouritesRepository.removeFavourite(
-                    userId = 1,
+                    userId = UserAuthenticationManager.user?.id ?: 0,
                     bookId = bookId
                 )
             } else {
                 favouritesRepository.addFavourite(
-                    userId = 1,
+                    userId = UserAuthenticationManager.user?.id ?: 0,
                     bookId = bookId
                 )
             }
