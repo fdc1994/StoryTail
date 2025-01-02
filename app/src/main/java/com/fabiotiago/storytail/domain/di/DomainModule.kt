@@ -8,8 +8,8 @@ import com.fabiotiago.storytail.domain.repository.ContactRepository
 import com.fabiotiago.storytail.domain.repository.ContactRepositoryImpl
 import com.fabiotiago.storytail.domain.repository.FavouritesRepository
 import com.fabiotiago.storytail.domain.repository.FavouritesRepositoryImpl
-import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepository
-import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepositoryImpl
+import com.fabiotiago.storytail.domain.repository.UserRepository
+import com.fabiotiago.storytail.domain.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -26,7 +26,7 @@ interface DomainModule {
     fun bindFavouritesRepository(favouritesRepositoryImpl: FavouritesRepositoryImpl): FavouritesRepository
 
     @Binds
-    fun bindUserAuthenticationRepository(userAuthenticationRepository: UserAuthenticationRepositoryImpl): UserAuthenticationRepository
+    fun bindUserAuthenticationRepository(userAuthenticationRepository: UserRepositoryImpl): UserRepository
 
     @Binds
     fun bindContactRepository(contactRepositoryImpl: ContactRepositoryImpl): ContactRepository

@@ -11,6 +11,9 @@ import com.fabiotiago.storytail.domain.repository.ContactRequest
 import com.fabiotiago.storytail.domain.repository.FavouriteRequest
 import com.fabiotiago.storytail.domain.repository.FavouritesResponse
 import com.fabiotiago.storytail.domain.repository.ReadBookResponse
+import com.fabiotiago.storytail.domain.repository.UpdateProgressRequest
+import com.fabiotiago.storytail.domain.repository.UpdateRatingRequest
+import com.fabiotiago.storytail.domain.repository.UpdateResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -24,7 +27,7 @@ import retrofit2.http.Query
 interface StoryTailService {
 
     @GET("/books")
-    suspend fun books(): BooksResponse
+    suspend fun books(@Query("user_id") id: Int?): BooksResponse
 
     @GET("/popular-books")
     suspend fun popularBooks(): BooksResponse
@@ -54,6 +57,12 @@ interface StoryTailService {
 
     @POST("/upgrade")
     suspend fun upgradeUser(@Body request: ChangeUserTypeRequest): Response<ChangeUserTypeResponse>
+
+    @POST("/update_progress")
+    suspend fun updateUserBookProgress(@Body request: UpdateProgressRequest): Response<UpdateResponse>
+
+    @POST("/update_rating")
+    suspend fun updateUserBookRating(@Body request: UpdateRatingRequest): Response<UpdateResponse>
 
     @POST("/contact")
     suspend fun sendContactRequest(@Body request: ContactRequest): Response<ChangeUserTypeResponse>

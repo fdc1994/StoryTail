@@ -1,6 +1,7 @@
 package com.fabiotiago.storytail.domain.repository
 
 import com.fabiotiago.storytail.data.interfaces.StoryTailService
+import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +22,7 @@ class BooksRepositoryImpl @Inject constructor(
     override suspend fun getBooks(): List<Book>? {
         return withContext(Dispatchers.IO) {
             try {
-                storyTailService.books().books
+                storyTailService.books(UserAuthenticationManager.user?.id).books
             } catch (e: Exception) {
                 null
             }
@@ -65,7 +66,7 @@ class BooksRepositoryImpl @Inject constructor(
     }
 }
 
-data class Book(
+data class  Book(
     @SerializedName("book_id")
     val id: Int,
 
@@ -94,7 +95,13 @@ data class Book(
     val updatedAt: String,
 
     @SerializedName("authors")
-    val author: String? = "Unknown"
+    val author: String? = "Unknown",
+
+    @SerializedName("rating")
+    val rating: Int?,
+
+    @SerializedName("progress")
+    val progress: Int = 0
 ) : Serializable
 
 data class BooksResponse(

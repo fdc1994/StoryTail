@@ -147,7 +147,19 @@ object UserAccountComposeUi {
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Login or Create Account")
+                Text("Login")
+            }
+            Spacer(modifier = Modifier.height(64.dp))
+            // Register button
+            Button(
+                onClick = {
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
+                        onLogin.invoke(email, password)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Create Account")
             }
             Button(
                 onClick = {

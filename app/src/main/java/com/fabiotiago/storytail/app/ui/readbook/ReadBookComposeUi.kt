@@ -22,7 +22,7 @@ object ReadBookComposeUi {
         when (viewState) {
             is ReadBookViewModel.ReadBookViewState.ContentLoaded -> {
                 val content = (viewState as ReadBookViewModel.ReadBookViewState.ContentLoaded)
-                PdfPagesList(content.pages)
+                PdfPagesList(content.pages, viewModel::updateUserProgress)
             }
             ReadBookViewModel.ReadBookViewState.Error -> ErrorView()
             ReadBookViewModel.ReadBookViewState.Loading -> LoadingView()
@@ -30,7 +30,7 @@ object ReadBookComposeUi {
     }
 
     @Composable
-    fun PdfPagesList(pages: List<Bitmap>) {
+    fun PdfPagesList(pages: List<Bitmap>, onProgressChange: (Int) -> Unit) {
         val pagerState = rememberPagerState(
             initialPageOffsetFraction = 0F,
             pageCount = { pages.size }
@@ -42,6 +42,8 @@ object ReadBookComposeUi {
                 modifier = Modifier.align(Alignment.TopCenter),
             ) { pageIndex ->
                 val page = pages[pageIndex]
+                val progress = (((pageIndex + 1).toFloat() / pages.size) * 100).toInt()
+                onProgressChange.invoke(progress)
                 Image(
                     bitmap = page.asImageBitmap(),
                     contentDescription = "PDF Page",

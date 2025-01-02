@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
@@ -15,6 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class BookFragment : Fragment() {
 
     private val args: BookFragmentArgs by navArgs()
+
+    private val viewModel: BookViewModel by viewModels()
 
     override fun onResume() {
         super.onResume()
@@ -32,6 +35,7 @@ class BookFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 BookComposeUi.BookProductPage(
+                    viewModel,
                     book,
                     ::openBookReader,
                     ::openAuthorPage

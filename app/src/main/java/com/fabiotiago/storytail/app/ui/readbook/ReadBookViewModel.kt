@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import android.graphics.pdf.PdfRenderer
+import com.fabiotiago.storytail.domain.repository.UserRepository
+import com.fabiotiago.storytail.domain.repository.UserRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,8 +24,11 @@ import javax.inject.Inject
 class ReadBookViewModel @Inject constructor(
     @ApplicationContext
     private val context: Context,
-    private val booksRepository: BooksRepository
+    private val booksRepository: BooksRepository,
+    private val userRepository: UserRepository
 )  : ViewModel() {
+
+    private var bookId = 0
 
     private val _viewState: MutableSharedFlow<ReadBookViewState> = MutableSharedFlow(
         replay = 1,
@@ -32,6 +37,7 @@ class ReadBookViewModel @Inject constructor(
     val viewState = _viewState.asSharedFlow()
 
     fun init(bookId: Int) {
+        this.bookId = bookId
         loadPdfFromUrl(bookId)
     }
 
@@ -58,6 +64,12 @@ class ReadBookViewModel @Inject constructor(
 
             pdfRenderer.close()
             bitmaps
+        }
+    }
+
+    fun updateUserProgress(progress: Int) {
+        viewModelScope.launch {
+            userRepository.updateUserProgress(progress, bookId)
         }
     }
 

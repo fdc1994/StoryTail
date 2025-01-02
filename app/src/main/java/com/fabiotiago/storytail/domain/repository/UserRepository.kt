@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-interface UserAuthenticationRepository {
+interface UserRepository {
     suspend fun authenticateUser(
         username: String,
         password: String,
@@ -15,14 +15,17 @@ interface UserAuthenticationRepository {
     )
 
     suspend fun upgradeUser(
-       id: Int,
-       callback: (Boolean, String) -> Unit
+        id: Int,
+        callback: (Boolean, String) -> Unit
     )
+
+    suspend fun updateUserProgress(progress: Int, bookId: Int)
+    suspend fun updateUserRating(progress: Int, bookId: Int)
 }
 
-class UserAuthenticationRepositoryImpl @Inject constructor(
+class UserRepositoryImpl @Inject constructor(
     private val storyTailService: StoryTailService
-) : UserAuthenticationRepository {
+) : UserRepository {
 
     override suspend fun authenticateUser(
         username: String,
@@ -93,6 +96,26 @@ class UserAuthenticationRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun updateUserProgress(progress: Int, bookId: Int) {
+        return withContext(Dispatchers.IO) {
+            storyTailService.updateUserBookProgress(
+                UpdateProgressRequest(
+                    UserAuthenticationManager.user?.id ?: return@withContext, bookId, progress
+                )
+            )
+        }
+    }
+
+    override suspend fun updateUserRating(progress: Int, bookId: Int) {
+        return withContext(Dispatchers.IO) {
+            storyTailService.updateUserBookRating(
+                UpdateRatingRequest(
+                    UserAuthenticationManager.user?.id ?: return@withContext, bookId, progress
+                )
+            )
+        }
+    }
 }
 
 // Request data class for authentication
@@ -154,3 +177,22 @@ data class ChangeUserTypeResponse(
     @SerializedName("user")
     val user: User
 )
+
+data class UpdateProgressRequest(
+    @SerializedName("user_id") val userId: Int,
+    @SerializedName("book_id") val bookId: Int,
+    @SerializedName("progress") val progress: Int
+)
+
+data class UpdateRatingRequest(
+    @SerializedName("user_id") val userId: Int,
+    @SerializedName("book_id") val bookId: Int,
+    @SerializedName("rating") val rating: Int
+)
+
+data class UpdateResponse(
+    @SerializedName("message") val message: String,
+    @SerializedName("status") val status: String? = null, // Optional if some APIs return status
+    @SerializedName("error") val error: String? = null    // Optional if errors are part of the response
+)
+

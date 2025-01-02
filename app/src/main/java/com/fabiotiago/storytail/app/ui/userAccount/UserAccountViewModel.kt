@@ -3,7 +3,7 @@ package com.fabiotiago.storytail.app.ui.userAccount
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
-import com.fabiotiago.storytail.domain.repository.UserAuthenticationRepository
+import com.fabiotiago.storytail.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserAccountViewModel @Inject constructor(
-    private val userAuthenticationRepository: UserAuthenticationRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _viewState: MutableSharedFlow<UserAccountViewState> = MutableSharedFlow(
@@ -31,7 +31,7 @@ class UserAccountViewModel @Inject constructor(
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _viewState.emit(UserAccountViewState.Loading)
-            userAuthenticationRepository.authenticateUser(username, password) { success, message ->
+            userRepository.authenticateUser(username, password) { success, message ->
                 launch {
                     if (success) {
                         _viewState.emit(UserAccountViewState.LoginSuccess(username))
@@ -57,7 +57,7 @@ class UserAccountViewModel @Inject constructor(
     fun becomePremium(userId: Int) {
         viewModelScope.launch {
             _viewState.emit(UserAccountViewState.Loading)
-            userAuthenticationRepository.upgradeUser(userId) { success, message ->
+            userRepository.upgradeUser(userId) { success, message ->
                 launch {
                     if (success) {
                         _viewState.emit(
