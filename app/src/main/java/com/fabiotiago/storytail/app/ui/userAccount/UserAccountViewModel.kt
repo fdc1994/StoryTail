@@ -39,14 +39,7 @@ class UserAccountViewModel @Inject constructor(
             userRepository.authenticateUser(username, password) { success, message ->
                 launch {
                     if (success) {
-                        _viewState.emit(
-                            UserAccountViewState.LoginSuccess(
-                                username,
-                                filteredBooks(booksRepository.getBooks()),
-                                favouritesRepository.getFavourites(),
-
-                            )
-                        )
+                        getLoggedInScreen()
                     } else {
                         _viewState.emit(UserAccountViewState.LoginError(message))
                     }
@@ -85,7 +78,7 @@ class UserAccountViewModel @Inject constructor(
         _viewState.emit(
             UserAccountViewState.LoginSuccess(
                 UserAuthenticationManager.user?.userName ?: "",
-                booksRepository.getBooks(),
+                filteredBooks(booksRepository.getBooks()),
                 favouritesRepository.getFavourites()
             )
         )
