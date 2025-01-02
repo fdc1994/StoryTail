@@ -1,7 +1,6 @@
 package com.fabiotiago.storytail.app.ui.userAccount
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -27,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.LoadingView
@@ -39,13 +36,15 @@ object UserAccountComposeUi {
     @Composable
     fun UserAccountScreen(
         viewModel: UserAccountViewModel,
+        openUserAccountBrowserPage: () -> Unit,
     ) {
         val state by viewModel.viewState.collectAsState(initial = UserAccountViewState.Logout)
 
         when (state) {
             is UserAccountViewState.Logout -> {
                 LoginForm(
-                    onLogin = viewModel::login
+                    onLogin = viewModel::login,
+                    onRegisterOrUserAccountRequested = openUserAccountBrowserPage
                 )
             }
 
@@ -59,7 +58,8 @@ object UserAccountComposeUi {
 
             is UserAccountViewState.LoginError -> LoginForm(
                 hasError = true,
-                onLogin = viewModel::login
+                onLogin = viewModel::login,
+                onRegisterOrUserAccountRequested = openUserAccountBrowserPage
             )
         }
     }
@@ -68,7 +68,8 @@ object UserAccountComposeUi {
     fun LoginForm(
         hasError: Boolean = false,
         errorMessage: String = "Something went wrong, please try again",
-        onLogin: (String, String) -> Unit
+        onLogin: (String, String) -> Unit,
+        onRegisterOrUserAccountRequested: () -> Unit
     ) {
         var email by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
@@ -153,9 +154,7 @@ object UserAccountComposeUi {
             // Register button
             Button(
                 onClick = {
-                    if (email.isNotEmpty() && password.isNotEmpty()) {
-                        onLogin.invoke(email, password)
-                    }
+                    onRegisterOrUserAccountRequested.invoke()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -163,11 +162,7 @@ object UserAccountComposeUi {
             }
             Button(
                 onClick = {
-                    if (email.isNotEmpty()) {
-                        Toast.makeText(context, "A reset email has been sent to your email", Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(context, "Please enter your email to reset password", Toast.LENGTH_LONG).show()
-                    }
+                    onRegisterOrUserAccountRequested.invoke()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

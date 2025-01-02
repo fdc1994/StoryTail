@@ -1,5 +1,7 @@
 package com.fabiotiago.storytail.app.ui.userAccount
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,9 +25,15 @@ class UserAccountFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 UserAccountComposeUi.UserAccountScreen(
-                    userAccountViewModel
+                    userAccountViewModel,
+                    ::openBrowser
                 )
             }
         }
+    }
+
+    private fun openBrowser() {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://localhost/storytail/"))
+        startActivity(intent)
     }
 }
