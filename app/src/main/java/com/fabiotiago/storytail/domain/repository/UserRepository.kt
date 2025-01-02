@@ -5,6 +5,7 @@ import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.security.MessageDigest
 import javax.inject.Inject
 
 interface UserRepository {
@@ -34,9 +35,13 @@ class UserRepositoryImpl @Inject constructor(
     ) {
         return withContext(Dispatchers.IO) {
             try {
+                // Hash the password with SHA-256
+                val hashedPassword = hashPassword(password)
+
                 // Make the authentication request
-                val response =
-                    storyTailService.authenticate(AuthenticationRequest(username, password))
+                val response = storyTailService.authenticate(
+                    AuthenticationRequest(username, hashedPassword)
+                )
 
                 // Check if the response is successful
                 if (response.isSuccessful) {
@@ -115,6 +120,14 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
         }
+    }
+
+
+    // Hash password with SHA-256
+    private fun hashPassword(password: String): String {
+        val messageDigest = MessageDigest.getInstance("SHA-256")
+        val hashedBytes = messageDigest.digest(password.toByteArray())
+        return hashedBytes.joinToString("") { "%02x".format(it) }
     }
 }
 
