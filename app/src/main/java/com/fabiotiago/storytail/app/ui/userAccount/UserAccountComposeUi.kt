@@ -1,6 +1,5 @@
 package com.fabiotiago.storytail.app.ui.userAccount
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.fabiotiago.storytail.app.ui.GenericComponentsComposables
 import com.fabiotiago.storytail.app.ui.GenericComponentsComposables.LoadingView
 import com.fabiotiago.storytail.domain.managers.UserAuthenticationManager
+import com.fabiotiago.storytail.domain.repository.Book
 
 
 object UserAccountComposeUi {
@@ -37,6 +38,7 @@ object UserAccountComposeUi {
     fun UserAccountScreen(
         viewModel: UserAccountViewModel,
         openUserAccountBrowserPage: () -> Unit,
+        onBookClick: (Book) -> Unit,
     ) {
         val state by viewModel.viewState.collectAsState(initial = UserAccountViewState.Logout)
 
@@ -49,7 +51,13 @@ object UserAccountComposeUi {
             }
 
             is UserAccountViewState.LoginSuccess -> {
-                PostLoginScreen(state as UserAccountViewState.LoginSuccess, viewModel::logout, viewModel::becomePremium)
+                PostLoginScreen(
+                    state as UserAccountViewState.LoginSuccess,
+                    viewModel::logout,
+                    viewModel::becomePremium,
+                    onBookClick,
+                    viewModel::addOrRemoveFavourite
+                )
             }
 
             is UserAccountViewState.Loading -> {
@@ -175,7 +183,9 @@ object UserAccountComposeUi {
     fun PostLoginScreen(
         state: UserAccountViewState.LoginSuccess,
         onLogout: () -> Unit,
-        onPremium: (Int) -> Unit
+        onPremium: (Int) -> Unit,
+        onBookClick: (Book) -> Unit,
+        addOrRemoveFavourite: (Boolean, Int) -> Unit
     ) {
         Column(
             modifier = Modifier
@@ -195,9 +205,23 @@ object UserAccountComposeUi {
             if ((UserAuthenticationManager.user?.userTypeId ?: 1) < 2) {
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Button(onClick = { UserAuthenticationManager.user?.id?.let { onPremium.invoke(it) } }, modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = { UserAuthenticationManager.user?.id?.let { onPremium.invoke(it) } },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text("Become Premium")
                 }
+            }
+
+            if (state.books != null) {
+                Spacer(modifier = Modifier.height(32.dp))
+                GenericComponentsComposables.BookCarousel(
+                    books = state.books,
+                    title = "Books you are reading",
+                    favourites = state.favourites,
+                    onBookClick = onBookClick,
+                    onFavoriteClick = addOrRemoveFavourite
+                )
             }
         }
     }

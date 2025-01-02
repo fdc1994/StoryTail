@@ -26,7 +26,11 @@
     <fragment
         android:id="@+id/navigation_user_account"
         android:name="com.fabiotiago.storytail.app.ui.userAccount.UserAccountFragment"
-        android:label="@string/title_account" />
+        android:label="@string/title_account" >
+        <action
+            android:id="@+id/action_navigation_user_account_to_bookFragment"
+            app:destination="@id/bookFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_about"
